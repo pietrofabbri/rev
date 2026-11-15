@@ -1,0 +1,139 @@
+// Test del motore di controllo, senza rete: i cataloghi sono simulati.
+// Uso: node tests/run.js
+"use strict";
+const assert = require("assert");
+const path = require("path");
+
+globalThis.REV_CONFIG = {
+  maxRefs: 30, concurrency: 2,
+  localCatalogs: [{ label: "Catalogo degli editori aderenti", url: "data/catalogo-editori.csv" }]
+};
+
+let calls = [];
+let routes = {};
+function reply(status, body){
+  return { status, ok: status >= 200 && status < 300,
+    json: async () => body, text: async () => (typeof body === "string" ? body : JSON.stringify(body)) };
+}
+globalThis.fetch = async (url) => {
+  calls.push(url);
+  for (const key of Object.keys(routes)) if (url.includes(key)) {
+    const r = routes[key];
+    return typeof r === "function" ? r(url) : r;
+  }
+  return reply(200, {});
+};
+
+const X = require(path.join(__dirname, "..", "assets", "checker.js"));
+const tests = [];
+function test(name, fn){ tests.push([name, fn]); }
+function setup(r){ calls = []; routes = r; X._resetCatalogs(); }
+
+const EMPTY = {
+  "catalogo-editori.csv": reply(200, "isbn,autore,titolo,anno,editore,link\n"),
+  "api.crossref.org/works?": reply(200, { message: { items: [] } }),
+  "googleapis.com/books": reply(200, {}),
+  "openlibrary.org": reply(200, { docs: [] }),
+  "openalex.org": reply(200, { is_retracted: false })
+};
+
+// ---- funzioni pure ----
+test("ISBN-13 valido e non valido", () => {
+  assert.strictEqual(X.extractISBN("Libro, ISBN 978-0-306-40615-7."), "9780306406157");
+  assert.strictEqual(X.extractISBN("Libro, ISBN 978-0-306-40615-8."), null);
+  assert.strictEqual(X.extractISBN("Libro 9780306406157 senza prefisso"), "9780306406157");
+});
+test("ISBN-10 valido", () => {
+  assert.strictEqual(X.extractISBN("ISBN 0-306-40615-2"), "0306406152");
+});
+test("DOI e anno", () => {
+  assert.strictEqual(X.extractDOI("Rossi (2020). Titolo. doi:10.1000/xyz123."), "10.1000/xyz123");
+  assert.strictEqual(X.extractYear("Eco, U. (1977). Come si fa una tesi"), 1977);
+});
+test("CSV con virgolette e virgole", () => {
+  const rows = X.parseCSV('isbn,autore,titolo,anno,editore,link\n123,"Eco, Umberto","Titolo, con virgola",1980,Bompiani,http://x\n');
+  assert.strictEqual(rows.length, 1);
+  assert.strictEqual(rows[0].autore, "Eco, Umberto");
+  assert.strictEqual(rows[0].titolo, "Titolo, con virgola");
+});
+test("divisione dei riferimenti e numerazione", () => {
+  const r = X.splitRefs("1. Eco, U. (1977). Come si fa una tesi di laurea.\n\ncorto\n[2] Calvino, I. (1988). Lezioni americane. Garzanti.");
+  assert.deepStrictEqual(r.length, 2);
+  assert.ok(r[0].startsWith("Eco"));
+});
+
+// ---- orchestrazione ----
+test("DOI registrato: verde", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(200, { message: { title: ["Attention Is All You Need"], issued: { "date-parts": [[2017]] } } }) });
+  const r = await X.checkOne("Vaswani, A. (2017). Attention Is All You Need. NeurIPS. https://doi.org/10.5555/3295222.3295349");
+  assert.strictEqual(r.state, "verde");
+});
+test("DOI ritirato: rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(200, { message: { title: ["Studio ritirato"], issued: { "date-parts": [[2019]] } } }),
+    "openalex.org": reply(200, { is_retracted: true }) });
+  const r = await X.checkOne("Bianchi (2019). Studio ritirato. doi:10.1234/abc");
+  assert.strictEqual(r.state, "rosso");
+  assert.ok(r.found.includes("ritirato"));
+});
+test("DOI con Crossref giù: non verificato, mai rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(503, {}) });
+  const r = await X.checkOne("Bianchi (2019). Studio. doi:10.1234/abc");
+  assert.strictEqual(r.state, "errore");
+});
+test("Catalogo aderenti: verde senza interrogare la rete", async () => {
+  setup({ ...EMPTY, "catalogo-editori.csv": reply(200,
+    'isbn,autore,titolo,anno,editore,link\n9780306406157,"Verdi, Anna",Storia minima della tipografia veneta,2019,Edizioni Esempio,https://example.org/libro\n') });
+  const r = await X.checkOne("Verdi, A. (2019). Storia minima della tipografia veneta. Venezia: Edizioni Esempio.");
+  assert.strictEqual(r.state, "verde");
+  assert.ok(r.found.includes("editori aderenti"));
+  assert.ok(!calls.some(u => u.includes("crossref") || u.includes("googleapis")));
+});
+test("Libro italiano trovato da Google Libri", async () => {
+  setup({ ...EMPTY, "googleapis.com/books": reply(200, { items: [{ volumeInfo: {
+    title: "Come si fa una tesi di laurea", authors: ["Umberto Eco"], publishedDate: "1977", publisher: "Bompiani", infoLink: "https://books.google.it/x" } }] }) });
+  const r = await X.checkOne("Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.");
+  assert.strictEqual(r.state, "verde");
+  assert.ok(r.found.includes("Google Libri"));
+});
+test("ISBN di un altro libro: da controllare", async () => {
+  setup({ ...EMPTY, "googleapis.com/books": reply(200, { items: [{ volumeInfo: {
+    title: "Manuale di giardinaggio", authors: ["Mario Neri"], publishedDate: "2010" } }] }) });
+  const r = await X.checkOne("Eco, U. (1977). Come si fa una tesi di laurea. ISBN 978-0-306-40615-7.");
+  assert.strictEqual(r.state, "giallo");
+  assert.ok(r.found.includes("titolo diverso"));
+});
+test("Riferimento inventato: non trovato", async () => {
+  setup({ ...EMPTY });
+  const r = await X.checkOne("Rossi, M. (2021). Un libro che forse non esiste affatto. Roma: Editore Immaginario.");
+  assert.strictEqual(r.state, "rosso");
+  assert.ok(r.found.includes("controllato a mano"));
+});
+test("Un catalogo giù e nessun risultato: non verificato", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works?": reply(429, {}) });
+  const r = await X.checkOne("Rossi, M. (2021). Un libro che forse non esiste affatto. Roma: Editore Immaginario.");
+  assert.strictEqual(r.state, "errore");
+});
+test("Un catalogo giù ma un altro trova: verde", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works?": reply(500, {}), "googleapis.com/books": reply(200, { items: [{ volumeInfo: {
+    title: "Lezioni americane", authors: ["Italo Calvino"], publishedDate: "1988", publisher: "Garzanti" } }] }) });
+  const r = await X.checkOne("Calvino, I. (1988). Lezioni americane. Milano: Garzanti.");
+  assert.strictEqual(r.state, "verde");
+});
+test("checkAll rispetta il limite e l'ordine", async () => {
+  setup({ ...EMPTY });
+  const refs = Array.from({ length: 35 }, (_, i) => "Autore" + i + ", A. (2001). Titolo inventato numero " + i + ". Editore.");
+  const out = await X.checkAll(refs);
+  assert.strictEqual(out.list.length, 30);
+  assert.strictEqual(out.results.length, 30);
+  assert.ok(out.results.every(r => r && r.state === "rosso"));
+});
+
+(async () => {
+  let fail = 0;
+  for (const [name, fn] of tests){
+    try { await fn(); console.log("ok   " + name); }
+    catch (e){ fail++; console.log("FAIL " + name + "\n     " + e.message); }
+  }
+  console.log(`\n${tests.length - fail}/${tests.length} test superati`);
+  process.exit(fail ? 1 : 0);
+})();

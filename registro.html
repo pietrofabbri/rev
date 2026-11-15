@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REV · Registro delle verifiche</title>
+<meta name="description" content="Registro pubblico delle verifiche: controlla il numero riportato su un libro.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="wrap">
+  <h1>Registro delle verifiche</h1>
+  <p class="lead">Ogni verifica pubblicata con il consenso del cliente ha un numero. Se hai trovato il bollino in un libro, cerca qui il numero.</p>
+
+  <div class="card">
+    <label for="q" class="small">Numero di registro (es. 2026-001) o titolo</label>
+    <div class="actions" style="margin-top:6px">
+      <input id="q" type="search" style="flex:1;min-width:220px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit">
+      <span id="count" class="small" role="status"></span>
+    </div>
+    <div id="hit"></div>
+  </div>
+
+  <h2>Tutte le verifiche</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Numero</th><th>Data</th><th>Opera</th><th>Editore o autore</th><th>Riferimenti verificati</th><th>Metodo</th><th>Stato</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="7" class="small">Caricamento…</td></tr></tbody>
+  </table></div>
+  <p class="small">"Valida": il bollino vale per l'edizione indicata. "Decaduta": i riferimenti sono cambiati dopo la verifica. Il registro non contiene gli errori trovati, che restano riservati al cliente.</p>
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function(){
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  var all = [];
+  function row(v){
+    return "<tr><td><strong>" + esc(v.numero) + "</strong></td><td>" + esc(v.data) + "</td><td>" + esc(v.opera) +
+      (v.edizione ? "<br><span class='small'>" + esc(v.edizione) + "</span>" : "") + "</td><td>" + esc(v.cliente) +
+      "</td><td>" + esc(v.riferimenti) + "</td><td>v" + esc(v.metodo) + "</td><td>" + esc(v.stato) + "</td></tr>";
+  }
+  function show(list){
+    document.getElementById("rows").innerHTML = list.length ? list.map(row).join("") :
+      '<tr><td colspan="7" class="small">Il registro è ancora vuoto: le prime verifiche saranno pubblicate qui.</td></tr>';
+  }
+  function search(){
+    var q = document.getElementById("q").value.trim().toLowerCase(), hit = document.getElementById("hit");
+    if (!q){ hit.innerHTML = ""; document.getElementById("count").textContent = all.length + " verifiche"; show(all); return; }
+    var found = all.filter(function(v){ return (v.numero||"").toLowerCase() === q || (v.opera||"").toLowerCase().indexOf(q) > -1; });
+    document.getElementById("count").textContent = found.length + " risultati";
+    show(found);
+    hit.innerHTML = found.length ? "" : '<p class="note">Nessuna verifica con questo numero o titolo. Se il numero è stampato in un libro, scrivici: lo controlliamo.</p>';
+  }
+  fetch("data/registro.json").then(function(r){ return r.json(); }).then(function(d){
+    all = (d.voci || []).slice().sort(function(a,b){ return (b.numero||"").localeCompare(a.numero||""); });
+    var n = new URLSearchParams(location.search).get("n");
+    if (n) document.getElementById("q").value = n;
+    search();
+  }).catch(function(){
+    document.getElementById("rows").innerHTML = '<tr><td colspan="7" class="small">Registro non disponibile al momento.</td></tr>';
+  });
+  document.getElementById("q").addEventListener("input", search);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REV · Verifica completa della bibliografia</title>
+<meta name="description" content="Verifica completa di bibliografie e citazioni con firma umana. Paghi solo gli errori confermati, ognuno con la sua prova.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="wrap">
+  <h1>Verifica completa</h1>
+  <p class="lead">Controlliamo ogni riferimento: che esista, che i dati siano esatti, che la fonte dica ciò che il testo le attribuisce. Ricevi le correzioni pronte da incollare. <strong>Paghi solo gli errori che troviamo e dimostriamo.</strong></p>
+
+  <h2>Prezzi</h2>
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">Verifica completa</h3>
+      <div class="price"><span data-price="perError"></span></div>
+      <p>per errore confermato. Minimo <span data-price="minimum"></span>. Tetto massimo concordato prima di iniziare: di norma <span data-price="capDefault"></span> fino a <span data-price="capDefaultRefs" data-num></span> riferimenti.</p>
+      <p class="small">Per editori, autori, agenzie.</p>
+      <a class="btn" data-mail="Richiesta di verifica completa" data-body="Titolo dell'opera:&#10;Numero indicativo di riferimenti:&#10;Data entro cui serve:&#10;Allego bibliografia e testo con le citazioni.">Chiedi un preventivo</a>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Tesi</h3>
+      <div class="price"><span data-price="thesis"></span></div>
+      <p>prezzo fisso fino a <span data-price="thesisMaxRefs" data-num></span> riferimenti. Coerenza fonte-frase sui <span data-price="thesisClaims" data-num></span> passaggi che indichi tu.</p>
+      <p class="small">Per laureandi e dottorandi.</p>
+      <a class="btn" href="tesi.html">Dettagli</a>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Dossier di revisione</h3>
+      <div class="price"><span data-price="dossier"></span></div>
+      <p>raccolta datata delle prove di revisione umana del testo, con marca temporale qualificata.</p>
+      <p class="small">Per editori e testate che devono dimostrare la revisione umana.</p>
+      <a class="btn ghost" data-mail="Richiesta di dossier di revisione">Chiedi informazioni</a>
+    </div>
+  </div>
+  <p class="note small" style="margin-top:18px">Offerta di lancio: per i primi <span data-price="launchClients" data-num></span> editori o autori il tetto scende a <span data-price="capLaunch"></span>, in cambio di una breve testimonianza scritta.</p>
+
+  <h2>Che cosa conta come errore</h2>
+  <p>Solo tre casi, ognuno con la prova allegata:</p>
+  <ol>
+    <li><strong>Fonte inesistente:</strong> non si trova in nessun catalogo né con la ricerca manuale.</li>
+    <li><strong>Dati bibliografici errati:</strong> autore, titolo, anno, rivista, volume, pagine o DOI sbagliati.</li>
+    <li><strong>Fonte che non sostiene la frase:</strong> la fonte dice altro, o il contrario. Vale solo se il testo della fonte è consultabile.</li>
+  </ol>
+  <p><strong>Non contano come errori</strong> lo stile di citazione e i refusi di punteggiatura. Le fonti esistenti ma non consultabili sono segnalate come "contenuto non verificabile" e non si pagano.</p>
+
+  <h2>Le garanzie</h2>
+  <ul class="check">
+    <li><strong>Ogni segnalazione ha la sua prova</strong>, un link o un estratto, controllabile in un clic.</li>
+    <li><strong>Nessun errore trovato, nessun pagamento.</strong></li>
+    <li><strong>Errore non provato, errore non pagato.</strong> Se contesti una voce e la prova non regge, la togliamo.</li>
+    <li><strong>Garanzia sul verde:</strong> se emerge un errore in un riferimento che abbiamo segnato come corretto, ti rimborsiamo il lavoro.</li>
+    <li><strong>Consegna in <span data-price="deliveryHours" data-num></span> ore</strong> dalla ricezione dei file, oppure <span data-price="delayDiscount" data-num></span>% di sconto.</li>
+    <li><strong>Riservatezza:</strong> i file sono cancellati alla consegna. Usiamo servizi di intelligenza artificiale che non addestrano i modelli sui tuoi dati.</li>
+  </ul>
+
+  <h2>Che cosa non promettiamo</h2>
+  <ul class="check no">
+    <li>Che il libro sia privo di errori: verifichiamo le fonti, non le tesi.</li>
+    <li>Che il testo sia "scritto da un umano": non è oggetto della verifica.</li>
+    <li>Una "certificazione": è una verifica documentata e firmata, con un metodo pubblico.</li>
+  </ul>
+
+  <h2>Che cosa ricevi</h2>
+  <ul>
+    <li>Un rapporto con l'elenco degli errori, la correzione pronta e la prova per ciascuno.</li>
+    <li>Il numero di registro, se lo desideri, consultabile nel <a href="registro.html">registro pubblico</a>.</li>
+    <li>Il testo del bollino da stampare nel colophon, facoltativo:</li>
+  </ul>
+  <p class="badge-sample">Riferimenti bibliografici verificati il [data] · n. [registro] · <span data-registry-url></span></p>
+  <p class="small">Il bollino vale solo per l'edizione verificata e decade se i riferimenti cambiano. Non va mai accompagnato dalla parola "certificato".</p>
+
+  <h2>Come si ordina</h2>
+  <ol>
+    <li>Scrivi a <span data-contact></span> allegando bibliografia e testo con le citazioni (va bene anche il PDF delle bozze).</li>
+    <li>Ricevi entro un giorno lavorativo il tetto di prezzo e la data di consegna.</li>
+    <li>Accetti le <a href="condizioni.html">condizioni</a> e iniziamo.</li>
+    <li>Ricevi il rapporto e la fattura con il numero esatto di errori.</li>
+  </ol>
+
+  <h2>Domande frequenti</h2>
+  <details><summary>Perché pagare se c'è il controllo gratuito?</summary><p>Il controllo gratuito dice solo se un'opera compare nei cataloghi online. Non controlla pagine, edizioni e numeri di volume, né se la fonte dice davvero ciò che le attribuisci. Non cerca le opere che online non ci sono e non firma nulla.</p></details>
+  <details><summary>Usate l'intelligenza artificiale?</summary><p>Sì, per il primo passaggio. Ogni errore che ti addebitiamo è stato controllato da una persona, con la prova in mano. L'AI da sola sbaglia proprio sulle citazioni: per questo non le lasciamo l'ultima parola.</p></details>
+  <details><summary>E se la bibliografia è enorme?</summary><p>Il tetto si concorda prima. Oltre quella cifra non paghi, anche se troviamo più errori.</p></details>
+  <details><summary>Chi verifica è indipendente?</summary><p>Sì. Nel rapporto è dichiarato ogni legame con te o con chi ci ha presentato.</p></details>
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REV · Metodo di verifica</title>
+<meta name="description" content="Il metodo pubblico e versionato con cui REV verifica bibliografie e citazioni.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="wrap">
+  <h1>Metodo di verifica</h1>
+  <p class="lead">Versione <span data-cfg="methodVersion"></span> del <span data-cfg="methodDate"></span>. Il metodo è pubblico perché una verifica vale quanto la possibilità di controllarla.</p>
+
+  <h2>Oggetto</h2>
+  <p>Si verificano i <strong>riferimenti bibliografici e le citazioni</strong> di un testo: che le opere esistano, che i dati siano esatti e che la fonte sostenga la frase che la cita. Non si verificano la verità delle tesi, la qualità del testo né la sua origine umana o artificiale.</p>
+
+  <h2>Procedura</h2>
+  <ol>
+    <li><strong>Controllo automatico di esistenza</strong> su cataloghi aperti: Crossref per articoli e atti con DOI, Google Libri e Open Library per i libri, OpenAlex per gli articoli ritirati, e il catalogo degli editori aderenti.</li>
+    <li><strong>Controllo automatico fonte-frase</strong>, quando il testo della fonte è consultabile. Uno strumento di intelligenza artificiale deve indicare l'estratto della fonte, copiato alla lettera, che giustifica l'esito. Senza estratto l'esito è "non determinabile".</li>
+    <li><strong>Revisione umana</strong> di tutti i casi segnalati e di un riferimento corretto ogni dieci, scelto a caso.</li>
+    <li><strong>Ricerca manuale</strong> per le opere non presenti nei cataloghi online: cataloghi delle biblioteche, siti degli editori, banche dati normative.</li>
+    <li><strong>Rapporto firmato</strong> con un numero di registro, la data e la prova per ogni errore.</li>
+  </ol>
+
+  <h2>Esiti</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Esito</th><th>Significato</th></tr></thead>
+    <tbody>
+      <tr><td>Corretto</td><td>Opera trovata, dati coincidenti, fonte coerente con la frase se è stata controllata.</td></tr>
+      <tr><td>Fonte inesistente</td><td>Non trovata nei cataloghi né con la ricerca manuale documentata.</td></tr>
+      <tr><td>Dati errati</td><td>Opera esistente, ma con autore, titolo, anno, rivista, volume, pagine o DOI sbagliati.</td></tr>
+      <tr><td>Non sostiene la frase</td><td>La fonte dice altro, o il contrario. Si indica sempre l'estratto.</td></tr>
+      <tr><td>Contenuto non verificabile</td><td>Opera esistente ma non consultabile. Non è un errore.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Indipendenza e conflitti</h2>
+  <p>Chi verifica dichiara nel rapporto ogni legame con il cliente o con chi lo ha presentato. Chi presenta clienti riceve una commissione, e anche questo è dichiarato. Il metodo e gli strumenti sono stati progettati con l'aiuto di un modello di intelligenza artificiale.</p>
+
+  <h2>Limiti noti</h2>
+  <ul>
+    <li>I cataloghi aperti coprono bene gli articoli scientifici internazionali e meno i libri italiani, gli atti di convegno e la letteratura grigia. Per questo un "non trovato" automatico non è mai un errore: diventa errore solo dopo la ricerca manuale.</li>
+    <li>La coerenza fonte-frase si può verificare solo sulle fonti consultabili.</li>
+    <li>La verifica riguarda i file ricevuti in quella data: le modifiche successive non sono coperte.</li>
+  </ul>
+
+  <h2>Versioni</h2>
+  <p>Ogni modifica del metodo cambia il numero di versione. Ogni rapporto indica la versione con cui è stato prodotto.</p>
+  <ul><li><strong>1.0</strong> (<span data-cfg="methodDate"></span>): prima versione pubblica.</li></ul>
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>
