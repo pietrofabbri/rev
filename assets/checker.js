@@ -265,7 +265,7 @@
     best = pick(cands);
     if (best) return best;
     if (errors) return {state:"errore", found:"Non trovato nei cataloghi che hanno risposto; " + errors + " catalogo/i non ha risposto. Riprova tra qualche minuto."};
-    return {state:"rosso", found:"Non trovato nei cataloghi consultati (Crossref, Google Libri, Open Library e cataloghi degli editori aderenti). Può essere un'opera non catalogata online oppure un riferimento errato: va controllato a mano."};
+    return {state:"rosso", found:"Non trovato nei cataloghi consultati (Crossref, Google Libri, Open Library). Può essere un'opera non catalogata online oppure un riferimento errato: va controllato a mano."};
   }
 
   async function checkAll(refs, onProgress){
@@ -285,7 +285,31 @@
     return {list:list, results:results};
   }
 
-  var api = {normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
+  // ---------- ricerca manuale in un clic ----------
+  // Per i riferimenti non trovati: link già compilati ai cataloghi da consultare a mano.
+  // Il formato OPAC SBN segue l'esempio della guida ufficiale (ricerca per autore).
+  function firstSurname(ref){
+    var head = ref.split(",")[0].replace(/\(.*?\)/g,"").trim();
+    var words = head.split(/\s+/).filter(Boolean);
+    if (words.length === 1) return words[0];            // "Eco, U."  -> Eco
+    if (words.length <= 3) return words[words.length-1]; // "Umberto Eco, …" -> Eco
+    return words[0] || "";
+  }
+  function searchLinks(ref){
+    var q = ref.replace(/https?:\/\/\S+/g,"").slice(0,200);
+    var links = [];
+    var sur = firstSurname(ref);
+    if (sur && sur.length >= 3){
+      links.push(["OPAC SBN (autore)", "https://opac.sbn.it/risultati-ricerca-avanzata?fieldstruct%5B1%5D=ricerca.parole_tutte%3A4%3D6" +
+        "&struct%3A1001=ricerca.parole_almeno_una%3A%40or%40&fieldvalue%5B1%5D=" + encodeURIComponent(sur) +
+        "&fieldaccess%5B1%5D=Autore%3A1003%3Anocheck"]);
+    }
+    links.push(["Google Libri", "https://www.google.com/search?tbm=bks&q=" + encodeURIComponent(q)]);
+    links.push(["Google Scholar", "https://scholar.google.com/scholar?q=" + encodeURIComponent(q)]);
+    return links;
+  }
+
+  var api = {searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
     extractISBN:extractISBN, splitRefs:splitRefs, judge:judge, authorMatch:authorMatch, parseCSV:parseCSV,
     checkOne:checkOne, checkAll:checkAll, _resetCatalogs:function(){ catalogsPromise = null; }};
   root.REV_CHECKER = api;
@@ -325,7 +349,9 @@
       counts[r.state]++;
       var lab = LABEL[r.state];
       var tr = document.createElement("tr");
-      tr.innerHTML = "<td>" + (i+1) + '</td><td><span class="pill ' + lab[1] + '">' + lab[0] + "</span></td><td>" + esc(list[i]) + "</td><td>" + r.found + "</td>";
+      var more = r.state === "verde" ? "" : '<div class="small" style="margin-top:6px">Cerca a mano: ' +
+        searchLinks(list[i]).map(function(l){ return link(l[1], l[0]); }).join(" · ") + "</div>";
+      tr.innerHTML = "<td>" + (i+1) + '</td><td><span class="pill ' + lab[1] + '">' + lab[0] + "</span></td><td>" + esc(list[i]) + "</td><td>" + r.found + more + "</td>";
       rows.appendChild(tr);
       var tmp = document.createElement("div"); tmp.innerHTML = r.found;
       lines.push((i+1) + ". [" + lab[0] + "] " + list[i] + "\n   " + tmp.textContent);

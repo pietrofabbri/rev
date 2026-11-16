@@ -4,29 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>REV · Per gli editori</title>
-<meta name="description" content="Verifica delle bibliografie per le collane di saggistica e il catalogo aperto degli editori aderenti.">
+<meta name="description" content="Verifica delle bibliografie prima della stampa: paghi solo gli errori confermati.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <main class="wrap">
   <h1>Per gli editori</h1>
-  <p class="lead">Due cose, entrambe semplici. Verificare le bibliografie dei libri prima della stampa. E far riconoscere subito i vostri libri a chi li cita.</p>
+  <p class="lead">Mandate le bozze. In <span data-price="deliveryHours" data-num></span> ore ricevete gli errori della bibliografia, ognuno con la prova e la correzione pronta. <span data-price="perError"></span> per errore confermato, con il tetto concordato prima, e niente se non ci sono errori.</p>
 
-  <h2>1. Verifica delle bibliografie</h2>
-  <p>Mandate le bozze, ricevete in <span data-price="deliveryHours" data-num></span> ore gli errori con la prova e la correzione pronta. <span data-price="perError"></span> per errore confermato, con il tetto concordato prima. Niente, se non ci sono errori. <a href="servizio.html">Tutti i dettagli</a>.</p>
-  <p>Per chi pubblica con continuità: una clausola nel contratto con l'autore ("la bibliografia sarà sottoposta a verifica prima della stampa") spinge l'autore a consegnare riferimenti più accurati, prima ancora della verifica.</p>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">Prima della stampa</h3><p>Un errore in bibliografia scoperto da un recensore costa più di una verifica. Scoperto dopo la stampa costa una ristampa.</p></div>
+    <div class="card"><h3 style="margin-top:0">Prima della ristampa</h3><p>Le vecchie edizioni hanno spesso riferimenti invecchiati: DOI cambiati, edizioni superate, link morti.</p></div>
+    <div class="card"><h3 style="margin-top:0">Con gli autori</h3><p>Una riga nel contratto ("la bibliografia sarà verificata prima della stampa") spinge l'autore a consegnare riferimenti più accurati.</p></div>
+  </div>
 
-  <h2>2. Catalogo degli editori aderenti</h2>
-  <p>Molti libri italiani non compaiono nei cataloghi internazionali. Chi li cita correttamente si vede rispondere "non trovato", e il libro sembra meno solido di quanto sia. Aderendo, i vostri titoli vengono <strong>riconosciuti come esistenti</strong> dal controllo gratuito, con il link alla vostra scheda.</p>
-  <ul class="check">
-    <li><strong>Gratis</strong>, senza esclusiva, revocabile in ogni momento.</li>
-    <li>Basta un file con <strong>ISBN, autore, titolo, anno, editore e link</strong> alla scheda del libro. Va bene l'esportazione del vostro gestionale o un foglio di calcolo.</li>
-    <li>Contiene solo dati già pubblici: nessun dato commerciale.</li>
-    <li>Gli aggiornamenti si mandano quando volete: una volta l'anno basta.</li>
-  </ul>
-  <a class="btn" data-mail="Adesione al catalogo degli editori aderenti" data-body="Editore:&#10;Referente:&#10;Allego il catalogo (ISBN, autore, titolo, anno, editore, link).">Aderisci al catalogo</a>
-  <p class="small" style="margin-top:12px">Il catalogo aderenti è pubblico e scaricabile. Aderire non comporta alcun giudizio sui libri e non dà diritto al bollino, che vale solo dopo una verifica completa.</p>
+  <p style="margin-top:24px"><a class="btn" data-mail="Verifica di una bibliografia" data-body="Titolo dell'opera:&#10;Numero indicativo di riferimenti:&#10;Data entro cui serve:&#10;Allego le bozze.">Chiedi un preventivo</a> <a class="btn ghost" href="servizio.html">Prezzi e garanzie</a></p>
+
+  <h2>Provate prima, gratis</h2>
+  <p>Incollate la bibliografia di un vostro titolo nel <a href="index.html">controllo gratuito</a>. Per ogni riferimento non trovato avete i link già pronti per cercarlo nei cataloghi delle biblioteche italiane.</p>
 </main>
 <script src="assets/config.js"></script>
 <script src="assets/site.js"></script>

@@ -62,6 +62,14 @@ test("divisione dei riferimenti e numerazione", () => {
   assert.ok(r[0].startsWith("Eco"));
 });
 
+test("link di ricerca manuale", () => {
+  assert.strictEqual(X.firstSurname("Eco, U. (1977). Come si fa una tesi."), "Eco");
+  assert.strictEqual(X.firstSurname("Umberto Eco, Come si fa una tesi, Bompiani 1977"), "Eco");
+  const l = X.searchLinks("Eco, U. (1977). Come si fa una tesi.");
+  assert.ok(l[0][1].startsWith("https://opac.sbn.it/") && l[0][1].includes("fieldvalue%5B1%5D=Eco"));
+  assert.strictEqual(l.length, 3);
+});
+
 // ---- orchestrazione ----
 test("DOI registrato: verde", async () => {
   setup({ ...EMPTY, "api.crossref.org/works/10.": reply(200, { message: { title: ["Attention Is All You Need"], issued: { "date-parts": [[2017]] } } }) });

@@ -22,9 +22,8 @@ window.REV_CONFIG = {
   concurrency: 3,
   // Cataloghi propri, in CSV (colonne: isbn,autore,titolo,anno,editore,link).
   // Si aggiungono qui senza toccare il codice.
-  localCatalogs: [
-    { label: "Catalogo degli editori aderenti", url: "data/catalogo-editori.csv" }
-  ],
+  // Esempio: { label: "Archivio REV dei riferimenti verificati", url: "data/archivio.csv" }
+  localCatalogs: [],
 
   // --- Listino (unica fonte dei prezzi del sito) ---
   prices: {

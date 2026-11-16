@@ -15,7 +15,6 @@ Il sito non ha server né build: sono file HTML, CSS e JavaScript serviti da Git
 | `servizio.html`, `tesi.html`, `editori.html`, `partner.html` | Offerte |
 | `metodo.html` | Metodo pubblico e versionato |
 | `registro.html` + `data/registro.json` | Registro pubblico delle verifiche |
-| `data/catalogo-editori.csv` | Catalogo degli editori aderenti (isbn,autore,titolo,anno,editore,link) |
 | `condizioni.html`, `privacy.html` | Bozze in revisione legale |
 | `tests/run.js` | Test del motore senza rete (`node tests/run.js`), eseguiti a ogni push |
 
@@ -26,8 +25,7 @@ Il sito non ha server né build: sono file HTML, CSS e JavaScript serviti da Git
 
 ## Operazioni ricorrenti
 - **Nuova verifica pubblicata:** aggiungere una voce in `data/registro.json`.
-- **Nuovo editore aderente:** aggiungere le sue righe a `data/catalogo-editori.csv`.
-- **Nuovo catalogo proprio** (es. archivio dei riferimenti verificati): aggiungere una voce a `localCatalogs` in `config.js`.
+- **Catalogo proprio** (es. archivio dei riferimenti verificati, quando conviene pubblicarlo): file CSV in `data/` (isbn,autore,titolo,anno,editore,link) e una voce in `localCatalogs` di `config.js`. Viene consultato per primo, senza rete.
 - **Cambio di prezzo:** solo in `config.js`.
 - **Cambio di metodo:** aggiornare `metodo.html` e `methodVersion`.
 
