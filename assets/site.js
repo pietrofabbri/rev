@@ -4,12 +4,9 @@
   var P = C.prices || {};
   var NAV = [
     ["index.html","Controllo gratuito"],
-    ["servizio.html","Verifica completa"],
+    ["servizio.html","Prezzi"],
     ["tesi.html","Tesi"],
-    ["editori.html","Editori"],
-    ["partner.html","Partner"],
-    ["metodo.html","Metodo"],
-    ["registro.html","Registro"]
+    ["metodo.html","Come lavoriamo"]
   ];
   var isPreview = !(C.contactEmail && C.operatorName && C.vatNumber);
   window.REV_PREVIEW = isPreview;
@@ -52,7 +49,7 @@
     '<a href="mailto:' + C.contactEmail + '">' + C.contactEmail + "</a>";
   fw.appendChild(el("div",{}, who));
   fw.appendChild(el("div",{},
-    '<a href="metodo.html">Metodo v' + (C.methodVersion||"1.0") + "</a> · " +
+    '<a href="editori.html">Editori</a> · <a href="partner.html">Partner</a> · ' +
     '<a href="condizioni.html">Condizioni</a> · <a href="privacy.html">Privacy</a> · ' +
     '<a href="registro.html">Registro delle verifiche</a>'));
   foot.appendChild(fw);
