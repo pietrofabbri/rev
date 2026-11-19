@@ -11,6 +11,7 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
 - 19 nov: **strumento corretto e pubblicato** (pull request #3).
 - 19 nov: chiave Google Libri creata, limitata al sito e alla sola Books API, inserita in `config.js` (pull request #4). Terzo giro del test dal vivo: **superato**, 23 verdi su 30. Lettura dei riferimenti in stile APA e italiano; Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; cognomi composti nei link OPAC; tempo massimo e secondo tentativo per catalogo; controllo dell'ISBN anche su Open Library, che prevale sul verde; avviso sugli ISBN ripetuti. Test automatici: 24. Secondo giro dal vivo: 18 verdi su 30.
 - 19 nov, prova a secco del passo 4: lettura dello stile "COGNOME, Nome, Titolo" (da 1 a 27 libri verdi su 44); articoli di quotidiano mai rossi; link OPAC per cognome e titolo invece che per solo cognome. 26 test automatici. Pull request #5.
+- 19 nov, decisioni del 18 nov sul sito (pull request #6): via il dossier; pagina partner solo informativa; "solo le fonti, mai il testo" in home e pagina tesi; prima verifica gratuita in cambio di testimonianza e del permesso di misurare i tempi; consegna in 3 giorni lavorativi (`deliveryDays`); link Editori tolto dal piè di pagina. I prezzi non cambiano finché il passo 5 non è confermato.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
