@@ -1,6 +1,6 @@
 # Procedura di verifica
 
-Ultimo aggiornamento: 2026-11-18 · Revisione: dopo ogni 10 lavori, aggiornando i tempi reali · **Unica fonte dei tempi**
+Ultimo aggiornamento: 2026-11-19 · Revisione: dopo ogni 10 lavori, aggiornando i tempi reali · **Unica fonte dei tempi**
 
 ## Tempi obiettivo (stime mai misurate: si misurano al passo 4 di 18)
 
@@ -15,7 +15,7 @@ Ultimo aggiornamento: 2026-11-18 · Revisione: dopo ogni 10 lavori, aggiornando 
 
 **Totale umano stimato: 1-1,5 ore a lavoro.** Se un lavoro supera le 3 ore, va annotato e la causa entra nella revisione mensile.
 
-**Perché conta:** a 29 € l'obiettivo di 40 € per ora umana (12) regge solo sotto i 43 minuti a lavoro. Il prezzo si fissa dopo la misura (D-24).
+**Perché conta:** a 29 € l'obiettivo di 40 € per ora umana (12) regge solo sotto i 43 minuti a lavoro. Il prezzo si fissa dopo la misura (D-24). La prova a secco del 19 nov indica circa 2 ore per una tesi umanistica: vedi sotto.
 
 ## Cronometro del lavoro di prova (passo 4 di 18)
 Da compilare durante il lavoro, un minuto per volta, poi riportare in 12.
@@ -29,6 +29,9 @@ Da compilare durante il lavoro, un minuto per volta, poi riportare in 12.
 | 5. Rapporto | | |
 | 6. Chiusura | | |
 | **Totale** | | Riferimenti: __ |
+
+### Prova a secco del 19 nov (minuti umani stimati, non misurati)
+Articolo di storia con 104 note e 73 fonti. Controllo automatico: 37 secondi in tre blocchi. Stima del lavoro umano: **circa 2 ore** con bibliografia finale fornita, circa 2,5 senza. A pesare sono i libri che solo SBN registra, i saggi in volume e i quotidiani. Dettagli in `tests/dal-vivo/2026-11-19-prova-a-secco.md` e in 18 (R-49…R-54).
 
 ## Passi
 1. **Ricezione.** Il cliente invia bibliografia e, per il controllo fonte-frase, il testo con le citazioni (per le tesi: i 10 passaggi scelti). Oggi si risponde con prezzo o tetto e data di consegna, e si parte solo dopo l'accettazione scritta delle condizioni. *Con il link di pagamento (D-25, passo 10) il preventivo sparisce: l'accettazione delle condizioni e i consensi a registro e archivio si danno al momento del pagamento; si controlla solo che il file sia nella fascia pagata (altrimenti: condizioni, punto 11).*

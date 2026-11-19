@@ -66,7 +66,7 @@ test("link di ricerca manuale", () => {
   assert.strictEqual(X.firstSurname("Eco, U. (1977). Come si fa una tesi."), "Eco");
   assert.strictEqual(X.firstSurname("Umberto Eco, Come si fa una tesi, Bompiani 1977"), "Eco");
   const l = X.searchLinks("Eco, U. (1977). Come si fa una tesi.");
-  assert.ok(l[0][1].startsWith("https://opac.sbn.it/") && l[0][1].includes("fieldvalue%5B1%5D=Eco"));
+  assert.ok(l[0][1].startsWith("https://opac.sbn.it/") && l[0][1].includes("fieldvalue%5B1%5D=Eco%20come%20tesi") && l[0][1].includes("Keywords"));
   assert.strictEqual(l.length, 3);
 });
 
@@ -155,7 +155,8 @@ test("cognomi composti", () => {
   assert.strictEqual(X.surnameOf("Gigi Di Fiore"), "Di Fiore");
   assert.strictEqual(X.surnameOf("Giuseppe Cesare Abba"), "Abba");
   assert.strictEqual(X.surnameOf("Alexandre Dumas (padre)"), "Dumas");
-  assert.ok(X.searchLinks("Denis Mack Smith, I Savoia re d'Italia, Milano, Rizzoli, 1990.")[0][1].includes("fieldvalue%5B1%5D=Mack%20Smith"));
+  assert.ok(X.searchLinks("Denis Mack Smith, I Savoia re d'Italia, Milano, Rizzoli, 1990.")[0][1].includes("fieldvalue%5B1%5D=Mack%20Smith%20savoia"));
+  assert.ok(X.searchLinks("FOFI, Goffredo, Il ’68 senza Lenin, Roma, e/o, 1998.")[0][1].includes("fieldvalue%5B1%5D=FOFI%20senza%20lenin"));
 });
 test("titolo corto di Crossref non combacia con tutto", async () => {
   setup({ ...EMPTY, "api.crossref.org/works?": reply(200, { message: { items: [

@@ -430,8 +430,16 @@
   function searchLinks(ref){
     var q = ref.replace(/https?:\/\/\S+/g,"").slice(0,200);
     var links = [];
-    var sur = firstSurname(ref);
-    if (sur && sur.length >= 3){
+    // OPAC SBN per parole chiave: cognome + prime parole del titolo.
+    // Prova del 19 nov: "Fofi" da solo dà 1.115 documenti, "Fofi senza Lenin" ne dà 2.
+    var p = parseRef(ref), sur = p.surname || "";
+    var words = tokens(mainTitle(p.title || "")).slice(0, 4).join(" ");
+    var kw = (sur + " " + words).trim();
+    if (sur && sur.length >= 3 && kw.length > sur.length){
+      links.push(["OPAC SBN", "https://opac.sbn.it/risultati-ricerca-avanzata?fieldstruct%5B1%5D=ricerca.parole_tutte%3A4%3D6" +
+        "&struct%3A1001=ricerca.parole_almeno_una%3A%40or%40&fieldvalue%5B1%5D=" + encodeURIComponent(kw) +
+        "&fieldaccess%5B1%5D=Keywords%3A1016"]);
+    } else if (sur && sur.length >= 3){
       links.push(["OPAC SBN (autore)", "https://opac.sbn.it/risultati-ricerca-avanzata?fieldstruct%5B1%5D=ricerca.parole_tutte%3A4%3D6" +
         "&struct%3A1001=ricerca.parole_almeno_una%3A%40or%40&fieldvalue%5B1%5D=" + encodeURIComponent(sur) +
         "&fieldaccess%5B1%5D=Autore%3A1003%3Anocheck"]);

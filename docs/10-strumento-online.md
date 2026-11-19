@@ -10,6 +10,7 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
 - 19 nov: primo test dal vivo, **non superato** (0 verdi su 30). Da correggere prima di ripeterlo: chiave Google Libri, ricerca Open Library per titolo e autore, somiglianza nei due sensi (passo 3b di 18).
 - 19 nov: **strumento corretto e pubblicato** (pull request #3).
 - 19 nov: chiave Google Libri creata, limitata al sito e alla sola Books API, inserita in `config.js` (pull request #4). Terzo giro del test dal vivo: **superato**, 23 verdi su 30. Lettura dei riferimenti in stile APA e italiano; Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; cognomi composti nei link OPAC; tempo massimo e secondo tentativo per catalogo; controllo dell'ISBN anche su Open Library, che prevale sul verde; avviso sugli ISBN ripetuti. Test automatici: 24. Secondo giro dal vivo: 18 verdi su 30.
+- 19 nov, prova a secco del passo 4: lettura dello stile "COGNOME, Nome, Titolo" (da 1 a 27 libri verdi su 44); articoli di quotidiano mai rossi; link OPAC per cognome e titolo invece che per solo cognome. 26 test automatici. Pull request #5.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
@@ -19,7 +20,7 @@ Controlla fino a 30 riferimenti nel browser del visitatore, nell'ordine:
 3. Open Library per titolo e cognome;
 4. OpenAlex per gli articoli ritirati.
 
-Esiti: verde, giallo, rosso, "non verificato". Un ISBN che corrisponde a un altro titolo dà sempre giallo, anche se il titolo esiste; lo stesso ISBN in due righe dà giallo a entrambe. Per ogni non verde, link già pronti a OPAC SBN (ricerca per autore), Google Libri e Google Scholar. Il formato del link OPAC SBN segue l'esempio della guida ufficiale ed è da controllare nel test dal vivo. Se un catalogo non risponde, l'esito non è mai rosso. Nessun server, nessun dato conservato.
+Esiti: verde, giallo, rosso, "non verificato". Un ISBN che corrisponde a un altro titolo dà sempre giallo, anche se il titolo esiste; lo stesso ISBN in due righe dà giallo a entrambe. Per ogni non verde, link già pronti a OPAC SBN (ricerca per parole chiave: cognome e prime parole del titolo), Google Libri e Google Scholar. Gli articoli di quotidiano sono sempre "non verificato", con il rinvio all'archivio della testata. Se un catalogo non risponde, l'esito non è mai rosso. Nessun server, nessun dato conservato.
 
 ## Configurazione
 Tutto in `assets/config.js`: contatti e partita IVA (finché mancano il sito resta in "anteprima"), prezzi, cataloghi propri, `politeEmail` e `googleBooksKey`. La chiave Google Libri è pubblica per forza (si usa dal browser): la proteggono le restrizioni su Google Cloud, che vanno aggiornate se il sito cambia indirizzo (R-28). I prezzi del sito vengono solo da lì e devono coincidere con [02](02-offerta.md).
@@ -28,7 +29,7 @@ Tutto in `assets/config.js`: contatti e partita IVA (finché mancano il sito res
 Su GitHub: Settings → Pages → Deploy from a branch → `main` / `(root)` → Save.
 
 ## Test
-- **Automatici:** `node tests/run.js` (24 casi, 8 presi dal test dal vivo del 19 nov), eseguiti da GitHub a ogni modifica.
+- **Automatici:** `node tests/run.js` (26 casi, 10 presi dalle prove dal vivo del 19 nov), eseguiti da GitHub a ogni modifica.
 - **Dal vivo, obbligatorio prima di annunciarlo (passo 3 di 18):**
 
 | Caso | Esito atteso |
