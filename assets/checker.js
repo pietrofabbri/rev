@@ -1,7 +1,7 @@
 /*
  * REV — controllo automatico delle bibliografie.
  * Gira nel browser del visitatore: nessun server, nessun dato conservato.
- * Fonti: cataloghi propri (CSV), Crossref, Google Libri, Open Library, OpenAlex (ritiri).
+ * Fonti: cataloghi propri (CSV), Crossref, DataCite (DOI di arXiv, Zenodo…), Google Libri, Open Library, OpenAlex (ritiri).
  * Regola: "non trovato" non significa "inesistente"; se un catalogo non risponde
  * l'esito è "non verificato", mai "non trovato".
  */
@@ -76,7 +76,8 @@
     var r = String(ref||"").replace(/https?:\/\/\S+/g,"").replace(/\s+/g," ").trim();
     var m = r.match(/^(.{2,200}?)\s*\((\d{4})[a-z]?\)\.?\s*(.+)$/);
     if (m){
-      var names = m[1].split(/;|&| e | and /).map(function(a){ return a.replace(/^[\s,]+|[\s,]+$/g,""); }).filter(Boolean);
+      var names = m[1].replace(/,?\s*et al\.?/i,"").split(/;|&| e | and |(?<=\.),\s+(?=[A-ZÀ-Ý])/)
+        .map(function(a){ return a.replace(/^[\s,]+|[\s,]+$/g,""); }).filter(Boolean);
       var first = names[0] || "";
       var title = m[3].split(/\.\s+/)[0].trim();
       var rest = m[3].slice(m[3].indexOf(title) + title.length).replace(/^[.\s]+/,"");
@@ -251,6 +252,20 @@
       return !!(w && w.is_retracted);
     } catch(e){ return false; }
   }
+  // DOI non registrati in Crossref ma in DataCite (arXiv, Zenodo, molti archivi di dati e tesi).
+  async function checkDataCite(doi, ref){
+    var d;
+    try { d = await getJSON("https://api.datacite.org/dois/" + encodeURIComponent(doi)); }
+    catch(e){ return {state:"errore", found:"Il DOI non è in Crossref e DataCite non ha risposto: riprova tra qualche minuto."}; }
+    if (!d || !d.data) return {state:"rosso", found:"Il DOI indicato non risulta registrato né in Crossref né in DataCite.", source:"datacite"};
+    var at = d.data.attributes || {}, title = ((at.titles||[])[0]||{}).title || "";
+    var meta = {source:"DataCite", type: ((at.types||{}).resourceTypeGeneral === "JournalArticle" ? "journal-article" : ""), title:title,
+      authors:(at.creators||[]).map(function(c){ return c.familyName ? c.familyName + (c.givenName ? ", " + c.givenName : "") : (c.name || ""); }).filter(Boolean),
+      year: at.publicationYear || null, publisher: at.publisher && (at.publisher.name || at.publisher) || "", doi: doi, url: at.url || ""};
+    var base = "DOI registrato in DataCite: " + link("https://doi.org/" + doi, title || doi) + " (" + (at.publicationYear || "anno n.d.") + ").";
+    if (bookSimilarity(title, "", ref) >= 0.6 || !title) return {state:"verde", found:base, source:"datacite", meta:meta};
+    return {state:"giallo", found: base + " Il titolo nel riferimento sembra diverso da quello registrato.", source:"datacite", meta:meta};
+  }
   function crossrefMeta(it){
     return {source:"Crossref", type:it.type || "", title:(it.title||[""])[0], year:yearOf(it),
       authors:(it.author||[]).map(function(a){ return a.family ? a.family + (a.given ? ", " + a.given : "") : (a.name || ""); }).filter(Boolean),
@@ -259,7 +274,7 @@
   }
   async function checkCrossrefDOI(doi, ref){
     var data = await getJSON("https://api.crossref.org/works/" + encodeURIComponent(doi));
-    if (!data) return {state:"rosso", found:"Il DOI indicato non risulta registrato in Crossref.", source:"crossref"};
+    if (!data) return checkDataCite(doi, ref);
     var it = data.message, title = (it.title||[""])[0], meta = crossrefMeta(it);
     var sim = titleSimilarity(title, ref);
     var retracted = await checkRetraction(doi);

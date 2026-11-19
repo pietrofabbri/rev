@@ -278,6 +278,19 @@ test("RIS e BibTeX: dati del catalogo, edizione del riferimento, esito in nota",
   assert.ok(bib.includes("author = {Eco, Umberto}") && bib.includes("publisher = {Bompiani}"));
   assert.ok(bib.includes("@book{rossi2021,") || bib.includes("@misc{rossi2021,"));
 });
+test("DOI di DataCite (arXiv): non è rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(404, {}),
+    "api.datacite.org/dois/": reply(200, { data: { attributes: { titles: [{ title: "Attention Is All You Need" }], publicationYear: 2017,
+      creators: [{ familyName: "Vaswani", givenName: "Ashish" }] } } }) });
+  const r = await X.checkOne("Vaswani, A., Shazeer, N. et al. (2017). Attention Is All You Need. https://doi.org/10.48550/arXiv.1706.03762");
+  assert.strictEqual(r.state, "verde"); assert.ok(r.found.includes("DataCite"));
+  assert.deepStrictEqual(X.parseRef("Vaswani, A., Shazeer, N. et al. (2017). Attention Is All You Need.").authors, ["Vaswani, A.", "Shazeer, N."]);
+});
+test("DOI assente da Crossref e da DataCite: rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(404, {}), "api.datacite.org/dois/": reply(404, {}) });
+  const r = await X.checkOne("Bianchi (2019). Studio inventato. doi:10.1234/nonesiste");
+  assert.strictEqual(r.state, "rosso");
+});
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;
   setup({ ...EMPTY, "api.crossref.org/works/10.": () => (++n === 1 ? reply(503, {}) :
