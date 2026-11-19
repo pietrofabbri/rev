@@ -196,6 +196,27 @@ test("ISBN giusto confermato da Open Library: verde", async () => {
   const r = await X.checkOne(BANTI);
   assert.strictEqual(r.state, "verde");
 });
+// ---- casi reali della prova a secco del 19 nov (articolo di storia con 104 note) ----
+test("stile COGNOME, Nome", () => {
+  const a = X.parseRef("FANTONI, Gianluca, Italy through the Red Lens, Londra, Palgrave, 2019.");
+  assert.strictEqual(a.surname, "FANTONI"); assert.strictEqual(a.title, "Italy through the Red Lens"); assert.strictEqual(a.year, 2019);
+  const b = X.parseRef("MASONI, Tullio, VECCHI, Paolo, Cinenotizie in poesia e prosa. Zavattini e la non-fiction, Torino, Lindau, 2000, p. 3.");
+  assert.strictEqual(b.surname, "MASONI"); assert.strictEqual(b.title, "Cinenotizie in poesia e prosa. Zavattini e la non-fiction"); assert.strictEqual(b.year, 2000);
+  const c = X.parseRef("BARLETTA, Luigi (a cura di), Scritti scostumati per uno zibaldone gregorettiano, Napoli, Guida, 2012, p. 14.");
+  assert.strictEqual(c.title, "Scritti scostumati per uno zibaldone gregorettiano");
+  const d = X.parseRef("BRUNETTA, Gian Piero, Cent’anni di cinema italiano. Dal 1945 ai giorni nostri, vol. 2, Roma-Bari, Laterza, 2004.");
+  assert.strictEqual(d.surname, "BRUNETTA"); assert.ok(d.title.startsWith("Cent’anni di cinema italiano"));
+  const e = X.parseRef("DELLA CASA, Stefano, «Il cinema militante», in CANOVA, Gianni (ed.), Storia del cinema italiano, Venezia, Marsilio, 2002, pp. 3-9.");
+  assert.strictEqual(e.surname, "DELLA CASA"); assert.strictEqual(e.title, "Il cinema militante");
+});
+test("articolo di quotidiano: mai rosso", async () => {
+  setup({ ...EMPTY });
+  const ref = "CRESPI, Alberto, «Gregoretti: “Nel ’69 l’Italia era nel futuro”», in l’Unità, 21 novembre 1999, p. 4.";
+  assert.ok(X.isNewspaper(ref));
+  const r = await X.checkOne(ref);
+  assert.strictEqual(r.state, "errore"); assert.ok(r.found.includes("Articolo di giornale"));
+  assert.ok(!X.isNewspaper("DELLA CASA, Stefano, «Il cinema militante», in Storia del cinema italiano, Venezia, Marsilio, 2002."));
+});
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;
   setup({ ...EMPTY, "api.crossref.org/works/10.": () => (++n === 1 ? reply(503, {}) :
