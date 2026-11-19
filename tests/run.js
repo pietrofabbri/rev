@@ -5,7 +5,7 @@ const assert = require("assert");
 const path = require("path");
 
 globalThis.REV_CONFIG = {
-  maxRefs: 30, concurrency: 2,
+  maxRefs: 30, concurrency: 2, retryDelayMs: 0,
   localCatalogs: [{ label: "Catalogo degli editori aderenti", url: "data/catalogo-editori.csv" }]
 };
 
@@ -134,6 +134,75 @@ test("checkAll rispetta il limite e l'ordine", async () => {
   assert.strictEqual(out.list.length, 30);
   assert.strictEqual(out.results.length, 30);
   assert.ok(out.results.every(r => r && r.state === "rosso"));
+});
+
+// ---- casi reali del test dal vivo del 19 nov 2026 (tests/dal-vivo/2026-11-19.md) ----
+const CARTER = "Nick Carter, Britain, Ireland and the Italian Risorgimento, Londra, Palgrave Macmillan, 2015, ISBN 978-1-137-29771-6.";
+const CURATOLO = "Giacomo Emilio Curatolo, Garibaldi, Vittorio Emanuele, Cavour nei fasti della Patria – Documenti inediti, Bologna, Zanichelli, MCMXI.";
+const GARIBALDI = "Giuseppe Garibaldi, I Mille, Torino, Tip. e Lit. Camilla e Bertolero, 1874.";
+const BANTI = "Alberto Mario Banti, Il Risorgimento italiano, Roma-Bari, Laterza, 2008, ISBN 9788842085744.";
+test("lettura dello stile italiano: titoli con virgole e anno romano", () => {
+  assert.strictEqual(X.parseRef(CARTER).title, "Britain, Ireland and the Italian Risorgimento");
+  assert.strictEqual(X.parseRef(CARTER).year, 2015);
+  assert.strictEqual(X.parseRef(CURATOLO).title, "Garibaldi, Vittorio Emanuele, Cavour nei fasti della Patria – Documenti inediti");
+  assert.strictEqual(X.parseRef("Harold Acton, Gli ultimi Borboni di Napoli (1825-1861), Firenze, Giunti Editore, 1997, ISBN 88-09-21256-8.").title, "Gli ultimi Borboni di Napoli (1825-1861)");
+  assert.strictEqual(X.mainTitle("Gli ultimi Borboni di Napoli (1825-1861)"), "Gli ultimi Borboni di Napoli");
+  assert.strictEqual(X.parseRef("Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.").title, "Come si fa una tesi di laurea");
+});
+test("cognomi composti", () => {
+  assert.strictEqual(X.surnameOf("Denis Mack Smith"), "Mack Smith");
+  assert.strictEqual(X.surnameOf("Raffaele de Cesare"), "de Cesare");
+  assert.strictEqual(X.surnameOf("Gigi Di Fiore"), "Di Fiore");
+  assert.strictEqual(X.surnameOf("Giuseppe Cesare Abba"), "Abba");
+  assert.strictEqual(X.surnameOf("Alexandre Dumas (padre)"), "Dumas");
+  assert.ok(X.searchLinks("Denis Mack Smith, I Savoia re d'Italia, Milano, Rizzoli, 1990.")[0][1].includes("fieldvalue%5B1%5D=Mack%20Smith"));
+});
+test("titolo corto di Crossref non combacia con tutto", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works?": reply(200, { message: { items: [
+    { DOI: "10.4135/x", title: ["Garibaldi, Giuseppe"], author: [], issued: { "date-parts": [[2013]] } },
+    { DOI: "10.1163/y", title: ["Documenti"], issued: { "date-parts": [[1973]] } } ] } }) });
+  const r = await X.checkOne(GARIBALDI);
+  assert.strictEqual(r.state, "rosso");
+});
+test("Open Library cercato per titolo e autore", async () => {
+  setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("title=") && url.includes("author=Banti")
+    ? reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] })
+    : reply(200, { docs: [] }) });
+  const r = await X.checkOne(BANTI);
+  assert.strictEqual(r.state, "verde");
+  assert.ok(r.found.includes("Open Library"));
+});
+test("stesso ISBN in due righe: da controllare, con avviso", async () => {
+  setup({ ...EMPTY, "openlibrary.org": reply(200, { docs: [
+    { title: "La fine di un regno", author_name: ["Raffaele de Cesare"], first_publish_year: 1900, key: "/works/OL2W" },
+    { title: "I Savoia re d'Italia", author_name: ["Denis Mack Smith"], first_publish_year: 1990, key: "/works/OL3W" } ] }) });
+  const out = await X.checkAll([
+    "Raffaele de Cesare, La Fine di un regno - vol.II, Città di Castello, S. Lapi tipografo editore, 1900, ISBN 88-17-33601-7.",
+    "Denis Mack Smith, I Savoia re d'Italia, Milano, Rizzoli, 1990, ISBN 88-17-33601-7."]);
+  assert.ok(out.results.every(r => r.state === "giallo" && r.found.includes("Lo stesso ISBN")));
+});
+test("ISBN di un altro libro: il verde del titolo non basta", async () => {
+  setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("isbn=")
+    ? reply(200, { docs: [{ title: "Borbonia felix", author_name: ["Renata De Lorenzo"], key: "/works/OL9W" }] })
+    : reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
+  const r = await X.checkOne("Alberto Mario Banti, Il Risorgimento italiano, Roma-Bari, Laterza, 2008, ISBN 978-88-8402-830-3.");
+  assert.strictEqual(r.state, "giallo");
+  assert.ok(r.found.includes("titolo diverso") && r.found.includes("Borbonia felix"));
+});
+test("ISBN giusto confermato da Open Library: verde", async () => {
+  setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("isbn=")
+    ? reply(200, { docs: [{ title: "Il Risorgimento italiano (Economica Laterza) (Italian Edition)", author_name: ["Alberto M. Banti"], key: "/works/OL1W" }] })
+    : reply(200, { docs: [{ title: "Il Risorgimento italiano (Economica Laterza) (Italian Edition)", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
+  const r = await X.checkOne(BANTI);
+  assert.strictEqual(r.state, "verde");
+});
+test("errore temporaneo: secondo tentativo", async () => {
+  let n = 0;
+  setup({ ...EMPTY, "api.crossref.org/works/10.": () => (++n === 1 ? reply(503, {}) :
+    reply(200, { message: { title: ["Attention Is All You Need"], issued: { "date-parts": [[2017]] } } })) });
+  const r = await X.checkOne("Vaswani, A. (2017). Attention Is All You Need. doi:10.5555/3295222.3295349");
+  assert.strictEqual(r.state, "verde");
+  assert.strictEqual(n, 2);
 });
 
 (async () => {

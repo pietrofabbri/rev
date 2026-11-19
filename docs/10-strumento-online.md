@@ -8,16 +8,17 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
 - 16 nov: menu ridotto a 4 voci, testi della home più brevi (passo 1 di 18). Da ricontrollare sul sito.
 - 18 nov: test automatici eseguiti, 16 su 16 superati. Manuale pubblicato in `docs/` (D-26).
 - 19 nov: primo test dal vivo, **non superato** (0 verdi su 30). Da correggere prima di ripeterlo: chiave Google Libri, ricerca Open Library per titolo e autore, somiglianza nei due sensi (passo 3b di 18).
+- 19 nov: **strumento corretto, in attesa di pubblicazione** (pull request #3 da unire; finché non è unita il sito usa ancora la versione vecchia). Lettura dei riferimenti in stile APA e italiano; Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; cognomi composti nei link OPAC; tempo massimo e secondo tentativo per catalogo; controllo dell'ISBN anche su Open Library, che prevale sul verde; avviso sugli ISBN ripetuti. Test automatici: 24. Secondo giro dal vivo: 18 verdi su 30.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
 Controlla fino a 30 riferimenti nel browser del visitatore, nell'ordine:
 1. cataloghi propri in CSV, se configurati (oggi nessuno; in futuro l'archivio, D-12);
-2. Crossref e Google Libri in parallelo (con ricerca per ISBN quando c'è);
-3. Open Library;
+2. Crossref, Google Libri e controllo dell'ISBN su Open Library, in parallelo (libri cercati per titolo e cognome);
+3. Open Library per titolo e cognome;
 4. OpenAlex per gli articoli ritirati.
 
-Esiti: verde, giallo, rosso, "non verificato". Per ogni non verde, link già pronti a OPAC SBN (ricerca per autore), Google Libri e Google Scholar. Il formato del link OPAC SBN segue l'esempio della guida ufficiale ed è da controllare nel test dal vivo. Se un catalogo non risponde, l'esito non è mai rosso. Nessun server, nessun dato conservato.
+Esiti: verde, giallo, rosso, "non verificato". Un ISBN che corrisponde a un altro titolo dà sempre giallo, anche se il titolo esiste; lo stesso ISBN in due righe dà giallo a entrambe. Per ogni non verde, link già pronti a OPAC SBN (ricerca per autore), Google Libri e Google Scholar. Il formato del link OPAC SBN segue l'esempio della guida ufficiale ed è da controllare nel test dal vivo. Se un catalogo non risponde, l'esito non è mai rosso. Nessun server, nessun dato conservato.
 
 ## Configurazione
 Tutto in `assets/config.js`: contatti e partita IVA (finché mancano il sito resta in "anteprima"), prezzi, cataloghi propri, `politeEmail` e `googleBooksKey`. I prezzi del sito vengono solo da lì e devono coincidere con [02](02-offerta.md).
@@ -26,7 +27,7 @@ Tutto in `assets/config.js`: contatti e partita IVA (finché mancano il sito res
 Su GitHub: Settings → Pages → Deploy from a branch → `main` / `(root)` → Save.
 
 ## Test
-- **Automatici:** `node tests/run.js` (16 casi), eseguiti da GitHub a ogni modifica.
+- **Automatici:** `node tests/run.js` (24 casi, 8 presi dal test dal vivo del 19 nov), eseguiti da GitHub a ogni modifica.
 - **Dal vivo, obbligatorio prima di annunciarlo (passo 3 di 18):**
 
 | Caso | Esito atteso |
@@ -44,6 +45,7 @@ Su GitHub: Settings → Pages → Deploy from a branch → `main` / `(root)` →
 | Data | Verdi / 30 | Gialli | Rossi (di cui falsi) | Non verificati | Trappole | Link "Cerca a mano" | Esito |
 |---|---|---|---|---|---|---|---|
 | 19 nov | **0** (prototipo: 17) | 8, tutti abbinamenti sbagliati | 0 | 22 | Entrambe "non verificato" | OPAC funziona ma solo per cognome | **Non superato.** Cause nel codice, non nei cataloghi: vedi [18](18-revisione-critica.md), R-40…R-47, e i dati in `tests/dal-vivo/2026-11-19.md` |
+| 19 nov, 2° giro (strumento corretto) | **18** | 1 (ISBN ripetuto, giusto) | 0 | 11, tutti per Google Libri | ISBN scambiato: giallo, giusto. Inventato: non verificato | — | **Non ancora superato** (18 su 20), nessun falso verde. Manca solo la chiave Google Libri (R-40) |
 
 ## Ordini
 Oggi: per email. Con D-25 (passo 10 di 18): link di pagamento; dopo il pagamento, **pagina di conferma con numero d'ordine e indirizzo a cui inviare il file**; nella pagina d'ordine, accettazione delle condizioni e due caselle di consenso (registro pubblico, archivio); avviso del pagamento sul telefono del responsabile.
