@@ -60,7 +60,7 @@ a.btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
 
 /* la scheda di catalogo: lo strumento */
 .scheda{position:relative;background:var(--card);border:1px solid #e4dcc4;border-radius:4px;
-  padding:34px 26px 22px 26px;margin-top:28px;
+  padding:34px 26px 46px 26px;margin-top:28px;
   background-image:linear-gradient(var(--card) 30px,transparent 30px),
     repeating-linear-gradient(to bottom,transparent 0 31px,var(--rule) 31px 32px);
   box-shadow:0 1px 0 #e4dcc4,0 10px 24px -18px rgba(21,33,59,.35)}
@@ -138,7 +138,7 @@ main > ol, main > ul, main > p{max-width:var(--read)}
   .nav{margin-left:0;width:100%;gap:2px}
   .nav a{padding:6px 10px}
   .offer{grid-template-columns:1fr}
-  .scheda{padding:34px 16px 22px}
+  .scheda{padding:34px 16px 46px}
   .scheda-head{left:16px;right:16px}
   /* risultati come schede impilate */
   table, thead, tbody, tr, td{display:block}
