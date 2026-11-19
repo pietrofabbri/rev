@@ -21,7 +21,7 @@ Una sola cosa nuova a ogni soglia (D-23). Ordine scelto in base a quanto tolgono
 |---|---|---|---|
 | Caricare la tesi | Word, PDF o testo, letti nel browser: la bibliografia finale va da sola nella scheda | Prima del primo incasso | **Fatto il 19 nov** |
 | Note e bibliografia allineate | Autori citati in nota e assenti in bibliografia, voci mai citate, "Ibidem" nella prima nota (solo file Word) | Prima del primo incasso | **Fatto il 19 nov** |
-| Esportare i riferimenti trovati | Formato Zotero (RIS) o BibTeX, per lo studente | Prima del primo incasso, se resta tempo | Da fare: piccolo |
+| Esportare i riferimenti trovati | Formato Zotero (RIS) o BibTeX, per lo studente | Prima del primo incasso, se resta tempo | **Fatto il 19 nov** |
 | Link citati | La pagina risponde ancora? Se no, rimando alla copia d'archivio (servizio Wayback Machine) | Prima del primo incasso, se resta tempo | Da fare: verificare che il servizio d'archivio risponda dal browser |
 | Ricerca automatica in SBN | I libri italiani che oggi risultano rossi falsi (prova a secco, R-50) | Soglia 2 (10 lavori) | Prima leggere le condizioni d'uso di ICCU |
 | Fonte-frase sugli articoli ad accesso aperto | Mostra il passo della fonte accanto alla frase, quando l'articolo è leggibile gratis | Soglia 2 o 3, per le tesi scientifiche | Da fare |
