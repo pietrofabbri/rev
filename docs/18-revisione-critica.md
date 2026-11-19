@@ -1,6 +1,6 @@
 # Revisione critica del 16 novembre e piano a piccoli passi
 
-Ultimo aggiornamento: 2026-11-18 · **Ingresso del manuale** (D-21): si parte da qui, gli altri file si aprono solo al bisogno.
+Ultimo aggiornamento: 2026-11-19 · **Ingresso del manuale** (D-21): si parte da qui, gli altri file si aprono solo al bisogno.
 
 Stato delle proposte: P-02, P-03, P-05, P-06, P-07, P-08 confermate il 18 nov (D-18…D-23). P-04 approvata ma non attiva (D-25). **P-01 in sospeso** fino al passo 5.
 
@@ -31,7 +31,8 @@ Sostituisce la tabella del 16 nov (approvato il 18 nov). La colonna "Chiude" rim
 |---|---|---|---|---|
 | 1 | Menu a 4 voci, home più breve | Claude | — | Fatto il 16 nov; da ricontrollare sul sito |
 | 2 | Confermare le proposte | Promotore | — | **Fatto il 18 nov** (P-01 rinviata al passo 5) |
-| 3 | Test dal vivo: 30 libri italiani, soglia 20 verdi; provare i link "Cerca a mano". Sotto i 20 verdi non si annuncia e si rifà il conto dei tempi. Istruzioni e tabella dei risultati in 10 | Promotore | R-26 | **In corso dal 18 nov**: il promotore prepara i 30 riferimenti e incolla i rapporti in chat |
+| 3 | Test dal vivo: 30 libri italiani, soglia 20 verdi; provare i link "Cerca a mano". Sotto i 20 verdi non si annuncia e si rifà il conto dei tempi. Istruzioni e tabella dei risultati in 10 | Claude (in automatico) | R-26 | **Fatto il 19 nov: non superato**, 0 verdi su 30. Con la correzione provata in pagina, 17 su 30 con il solo Open Library. Si ripete dopo il 3b |
+| 3b | Correggere lo strumento: chiave Google Libri in `config.js` (gratuita, va creata dal responsabile o dal promotore su Google Cloud e limitata al dominio del sito); Open Library per titolo e autore; somiglianza nei due sensi e autore obbligatorio per i libri; lettura del titolo nello stile "Autore, Titolo, Città, Editore, Anno"; OPAC per cognome e titolo; avviso sugli ISBN ripetuti. Poi ripetere il passo 3 | Claude + chi crea la chiave | R-40…R-47 | Da fare |
 | 4 | **Lavoro di prova cronometrato**: una tesi vera da circa 100 riferimenti, gratis in cambio di una testimonianza; minuti per passo nella tabella di 04 | Responsabile | R-06, R-11, R-20 | Da fare |
 | 5 | Con i minuti misurati: fissare contenuto, prezzo e garanzie di ogni fascia; decidere sulla garanzia "nessun errore, rimborso" (R-30). Poi aggiornare 02, 03, 05 | Promotore + Claude | R-01, R-02, R-03, R-07, R-30, R-37 | In attesa del passo 4 |
 | 6 | Commercialista; D-11 scritta; chiarire di chi è l'account del sito | Responsabile + promotore | R-04, R-21, R-28 | Da fare (si può fare in parallelo ai passi 3-5) |
@@ -124,6 +125,20 @@ Revisione file per file del manuale alla luce di P-01…P-08. Ogni ritrovamento 
 | R-37 | A | 01 punto 4 · 02 · 18 P-01 | **Il prodotto da 29 € è quasi tutto ciò che 01 dice di regalare.** 01: "il solo controllo di esistenza non è difendibile: va dato gratis e si fa pagare il resto". La verifica tesi comprende esistenza, dati bibliografici e coerenza fonte-frase su soli 10 passaggi. Per il pubblico scelto da P-02 la parte che vale (fonte-frase, firma) è la più piccola | Nella pagina tesi mettere davanti ciò che lo strumento gratuito non fa: correzioni pronte, ricerca a mano dei non trovati, i 10 passaggi, la firma. Va deciso con R-01 |
 | R-38 | B | 11 · 03 art. 6-7 · 18 P-04 | Consenso al registro pubblico ed esclusione dall'archivio oggi si chiedono per email. Con il link di pagamento non c'è più un momento in cui chiederli | Due caselle nella pagina d'ordine o due righe nell'email di conferma |
 | R-39 | C | 09 | Nessun problema: il barometro è già "in attesa" e P-07 lo conferma spento. Resta valido il conflitto dichiarato | Nulla |
+
+### Dal test dal vivo del 19 nov (dati in `tests/dal-vivo/2026-11-19.md`)
+| # | Gr. | Dove | Ritrovamento | Che cosa fare |
+|---|---|---|---|---|
+| R-40 | A | `config.js` | **Google Libri non risponde: errore 429, quota esaurita.** Senza `googleBooksKey` le chiamate anonime condividono un limite giornaliero comune. Il catalogo più utile per i libri italiani è di fatto spento, e ogni riga diventa "non verificato" | Creare una chiave gratuita su Google Cloud, limitata al dominio del sito, e inserirla in `config.js` |
+| R-41 | A | `checker.js` | **Open Library riceve l'intero riferimento** (città, editore, ISBN) e non trova quasi nulla. Interrogato per titolo e cognome, sullo stesso campione trova 17 libri su 30 | Ricerca per `title` e `author` |
+| R-42 | A | `checker.js` | **Crossref produce solo falsi abbinamenti sui libri** (8 su 8): la somiglianza conta solo le parole del titolo trovato presenti nel riferimento, quindi titoli corti come "Garibaldi, Giuseppe" o "Documenti" combaciano con tutto | Somiglianza nei due sensi; per un "da controllare" serve anche l'autore |
+| R-43 | B | `checker.js` | Lo strumento non sa leggere il titolo nello stile italiano "Autore, Titolo, Città, Editore, Anno". Anche il prototipo sbaglia 4 casi con virgole o trattini nel titolo | Lettura del titolo più robusta, con test automatici sui casi del 19 nov |
+| R-44 | B | `checker.js` | Open Library risponde in circa 7 secondi a domanda; con 3 controlli in parallelo alcune righe danno "2-3 cataloghi non hanno risposto". Durante il test la pagina è rimasta bloccata oltre 45 secondi | Tempo massimo per catalogo e un nuovo tentativo prima del "non verificato" |
+| R-45 | B | `checker.js` | Il link OPAC SBN cerca solo il cognome (1.880 risultati per Acton) e taglia i cognomi composti ("Mack Smith" diventa "Smith", "de Cesare" diventa "Cesare") | Cognome intero più due parole del titolo |
+| R-46 | B | 10 | Le trappole danno "non verificato" invece di rosso e giallo: non si possono giudicare finché c'è R-40 | Ripeterle con il passo 3 |
+| R-47 | C | `checker.js` · 02 | **Errore vero trovato a mano:** due righe della bibliografia di Wikipedia hanno lo stesso ISBN (88-17-33601-7). Lo strumento non lo segnala, eppure è un controllo che non richiede nessun catalogo. È un buon esempio di ciò che il servizio trova | Avviso "ISBN ripetuto in due righe". Usare il caso come esempio nella pagina tesi |
+
+**Limite del test:** il campione (Wikipedia, voce "Spedizione dei Mille") è più difficile di una tesi tipica: circa due terzi sono edizioni dell'Ottocento o del primo Novecento, 5 non sono in italiano. Il prossimo giro va fatto anche su una bibliografia recente.
 
 ---
 

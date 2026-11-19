@@ -1,12 +1,13 @@
 # Strumento gratuito e sito
 
-Ultimo aggiornamento: 2026-11-18 · Codice: https://github.com/pietrofabbri/rev · Sito: https://pietrofabbri.github.io/rev/
+Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev · Sito: https://pietrofabbri.github.io/rev/
 
 > **Da chiarire prima di uscire dall'anteprima (passo 6 di 18):** di chi è l'account `pietrofabbri`. Se è del promotore, l'indirizzo pubblico del servizio porta il suo nome, contro D-02: il repository passa all'account del responsabile.
 
 ## Modifiche recenti
 - 16 nov: menu ridotto a 4 voci, testi della home più brevi (passo 1 di 18). Da ricontrollare sul sito.
 - 18 nov: test automatici eseguiti, 16 su 16 superati. Manuale pubblicato in `docs/` (D-26).
+- 19 nov: primo test dal vivo, **non superato** (0 verdi su 30). Da correggere prima di ripeterlo: chiave Google Libri, ricerca Open Library per titolo e autore, somiglianza nei due sensi (passo 3b di 18).
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
@@ -42,7 +43,7 @@ Su GitHub: Settings → Pages → Deploy from a branch → `main` / `(root)` →
 ### Risultati del test dal vivo
 | Data | Verdi / 30 | Gialli | Rossi (di cui falsi) | Non verificati | Trappole | Link "Cerca a mano" | Esito |
 |---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| 19 nov | **0** (prototipo: 17) | 8, tutti abbinamenti sbagliati | 0 | 22 | Entrambe "non verificato" | OPAC funziona ma solo per cognome | **Non superato.** Cause nel codice, non nei cataloghi: vedi [18](18-revisione-critica.md), R-40…R-47, e i dati in `tests/dal-vivo/2026-11-19.md` |
 
 ## Ordini
 Oggi: per email. Con D-25 (passo 10 di 18): link di pagamento; dopo il pagamento, **pagina di conferma con numero d'ordine e indirizzo a cui inviare il file**; nella pagina d'ordine, accettazione delle condizioni e due caselle di consenso (registro pubblico, archivio); avviso del pagamento sul telefono del responsabile.
