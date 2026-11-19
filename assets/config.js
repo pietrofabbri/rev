@@ -17,7 +17,7 @@ window.REV_CONFIG = {
 
   // --- Cataloghi ---
   politeEmail: "",           // email del servizio per Crossref/OpenAlex (consigliata)
-  googleBooksKey: "",        // chiave Google Books limitata al dominio del sito (consigliata)
+  googleBooksKey: "AIzaSyDYeCItsg2UY5c7jed6ftQrvs9LrtEjLto", // limitata a https://pietrofabbri.github.io/rev/* e alla sola Books API
   maxRefs: 30,
   concurrency: 3,
   // Cataloghi propri, in CSV (colonne: isbn,autore,titolo,anno,editore,link).
