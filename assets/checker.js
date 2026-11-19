@@ -64,12 +64,25 @@
   // Articolo di quotidiano o settimanale: «Titolo», in Testata, 21 novembre 1999
   var NEWSPAPER = new RegExp("»,?\\s+in\\s+[^,]+,\\s*(\\d{1,2}\\s+)?(" + MONTHS + ")\\s+(1[89]\\d\\d|20\\d\\d)", "i");
   function isNewspaper(ref){ return NEWSPAPER.test(ref); }
+  function titleCase(s){ return String(s||"").toLowerCase().replace(/(^|[\s'’\-])([a-zà-ÿ])/g, function(_, a, b){ return a + b.toUpperCase(); }); }
+  // "Umberto Eco" -> "Eco, Umberto"; "Denis Mack Smith" -> "Mack Smith, Denis"; "Eco, U." resta com'è.
+  function lastFirst(name){
+    name = String(name||"").replace(/\s*\((a cura di|ed\.?|eds\.?|cur\.?)\)/i,"").replace(/\(.*?\)/g,"").trim();
+    if (!name || name.indexOf(",") > -1) return name;
+    var sur = surnameOf(name), given = name.slice(0, name.length - sur.length).trim();
+    return given ? sur + ", " + given : sur;
+  }
   function parseRef(ref){
     var r = String(ref||"").replace(/https?:\/\/\S+/g,"").replace(/\s+/g," ").trim();
     var m = r.match(/^(.{2,200}?)\s*\((\d{4})[a-z]?\)\.?\s*(.+)$/);
     if (m){
-      var first = m[1].split(/;|&| e | and /)[0];
-      return {author:first.trim(), surname:surnameOf(first), title:m[3].split(/\.\s+/)[0].trim(), year:parseInt(m[2],10), style:"apa"};
+      var names = m[1].split(/;|&| e | and /).map(function(a){ return a.replace(/^[\s,]+|[\s,]+$/g,""); }).filter(Boolean);
+      var first = names[0] || "";
+      var title = m[3].split(/\.\s+/)[0].trim();
+      var rest = m[3].slice(m[3].indexOf(title) + title.length).replace(/^[.\s]+/,"");
+      var pub = rest.match(/^([^.:,]{2,40}):\s*([^.]+)/);
+      return {author:first, authors:names, surname:surnameOf(first), title:title, year:parseInt(m[2],10),
+        city: pub ? pub[1].trim() : "", publisher: pub ? pub[2].trim() : "", container:"", style:"apa"};
     }
     var parts = r.split(/,\s+/);
     if (parts.length >= 3){
@@ -87,9 +100,15 @@
       if (q) title = q[1];
       title = title.replace(/\s*\((a cura di|ed\.?|eds\.?)\)/i,"");
       var y = j > -1 ? parseInt(parts[j], 10) : extractYear(r);
-      return {author:firstAuthor.trim(), surname: caps ? parts[0].trim() : surnameOf(parts[0]), title:title.trim(), year: isNaN(y) ? extractYear(r) : y, style: caps ? "it-caps" : "it"};
+      var authors = [];
+      if (caps){ for (var a = 0; a + 1 <= ts - 1; a += 2) authors.push(titleCase(parts[a].trim()) + ", " + parts[a+1].replace(/\s*\((a cura di|ed\.?|eds\.?|cur\.?)\)/i,"").trim()); }
+      else authors.push(lastFirst(parts[0]));
+      var cont = r.match(/»,?\s+in\s+([^,]+)/);
+      return {author:firstAuthor.trim(), authors:authors, surname: caps ? parts[0].trim() : surnameOf(parts[0]), title:title.trim(),
+        year: isNaN(y) ? extractYear(r) : y, city: (j >= ts + 3 && !q) ? parts[j-2].trim() : "", publisher: (j >= ts + 3 && !q) ? parts[j-1].trim() : "",
+        container: cont ? cont[1].trim() : "", style: caps ? "it-caps" : "it"};
     }
-    return {author:"", surname:"", title:"", year:extractYear(r), style:"?"};
+    return {author:"", authors:[], surname:"", title:"", year:extractYear(r), city:"", publisher:"", container:"", style:"?"};
   }
   // Titolo principale: prima di ":" o " - ", senza le date tra parentesi.
   function mainTitle(t){
@@ -216,7 +235,9 @@
     var found = esc(best.label) + ": " + link(r.link, r.titolo) + (r.autore ? " di " + esc(r.autore) : "") +
       " (" + esc([r.editore, r.anno].filter(Boolean).join(", ")) + ").";
     if (best.state === "giallo") found += " Corrispondenza parziale: controllare i dati.";
-    return {state:best.state, found:found, source:"locale"};
+    return {state:best.state, found:found, source:"locale", meta:{source:best.label, type:"book", title:r.titolo,
+      authors: String(r.autore||"").split(/;|\|/).map(function(a){ return lastFirst(a.trim()); }).filter(Boolean),
+      year: parseInt(r.anno,10) || null, publisher:r.editore || "", isbn:(r.isbn||"").replace(/[^0-9Xx]/g,""), url:r.link || ""}};
   }
 
   // ---------- Crossref e OpenAlex ----------
@@ -230,19 +251,25 @@
       return !!(w && w.is_retracted);
     } catch(e){ return false; }
   }
+  function crossrefMeta(it){
+    return {source:"Crossref", type:it.type || "", title:(it.title||[""])[0], year:yearOf(it),
+      authors:(it.author||[]).map(function(a){ return a.family ? a.family + (a.given ? ", " + a.given : "") : (a.name || ""); }).filter(Boolean),
+      container:(it["container-title"]||[""])[0] || "", volume:it.volume || "", issue:it.issue || "", pages:it.page || "",
+      publisher:it.publisher || "", doi:it.DOI || ""};
+  }
   async function checkCrossrefDOI(doi, ref){
     var data = await getJSON("https://api.crossref.org/works/" + encodeURIComponent(doi));
     if (!data) return {state:"rosso", found:"Il DOI indicato non risulta registrato in Crossref.", source:"crossref"};
-    var it = data.message, title = (it.title||[""])[0];
+    var it = data.message, title = (it.title||[""])[0], meta = crossrefMeta(it);
     var sim = titleSimilarity(title, ref);
     var retracted = await checkRetraction(doi);
     var base = "DOI registrato: " + link("https://doi.org/" + doi, title || doi) + " (" + (yearOf(it) || "anno n.d.") + ").";
-    if (retracted) return {state:"rosso", found: base + " <strong>Risulta ritirato (retracted).</strong>", source:"crossref"};
-    if (sim >= 0.6 || !title) return {state:"verde", found:base, source:"crossref"};
-    return {state:"giallo", found: base + " Il titolo nel riferimento sembra diverso da quello registrato.", source:"crossref"};
+    if (retracted) return {state:"rosso", found: base + " <strong>Risulta ritirato (retracted).</strong>", source:"crossref", meta:meta, retracted:true};
+    if (sim >= 0.6 || !title) return {state:"verde", found:base, source:"crossref", meta:meta};
+    return {state:"giallo", found: base + " Il titolo nel riferimento sembra diverso da quello registrato.", source:"crossref", meta:meta};
   }
   async function checkCrossrefSearch(ref){
-    var data = await getJSON("https://api.crossref.org/works?rows=3&select=DOI,title,subtitle,author,issued,type&query.bibliographic=" + encodeURIComponent(ref.slice(0,300)));
+    var data = await getJSON("https://api.crossref.org/works?rows=3&select=DOI,title,subtitle,author,issued,type,container-title,volume,issue,page,publisher&query.bibliographic=" + encodeURIComponent(ref.slice(0,300)));
     var items = (data && data.message && data.message.items) || [];
     var parsed = parseRef(ref), year = parsed.year || extractYear(ref), best = null;
     items.forEach(function(it){
@@ -257,14 +284,14 @@
     if (!best) return null;
     var doi = best.it.DOI;
     var found = "Record Crossref: " + link("https://doi.org/" + doi, best.title) + " (" + (yearOf(best.it) || "anno n.d.") + "), DOI " + esc(doi) + ".";
-    if (doi && await checkRetraction(doi)) return {state:"rosso", found: found + " <strong>Risulta ritirato (retracted).</strong>", source:"crossref"};
+    if (doi && await checkRetraction(doi)) return {state:"rosso", found: found + " <strong>Risulta ritirato (retracted).</strong>", source:"crossref", meta:crossrefMeta(best.it), retracted:true};
     if (best.state === "giallo"){
       var diffs = [];
       if (!best.aM) diffs.push("autore");
       if (year && !best.yM) diffs.push("anno");
       found += " Corrispondenza parziale" + (diffs.length ? " (verificare " + diffs.join(" e ") + ")" : "") + ".";
     }
-    return {state:best.state, found:found, source:"crossref"};
+    return {state:best.state, found:found, source:"crossref", meta:crossrefMeta(best.it)};
   }
 
   // ---------- Google Libri ----------
@@ -273,7 +300,7 @@
     var q = isbn ? "isbn:" + isbn :
       (parsed.title ? mainTitle(parsed.title) + (parsed.surname ? " inauthor:" + parsed.surname : "") : ref.replace(/https?:\/\/\S+/g,"").slice(0,200));
     var url = "https://www.googleapis.com/books/v1/volumes?maxResults=5&printType=books" +
-      "&fields=items(volumeInfo(title,subtitle,authors,publishedDate,publisher,infoLink))&q=" + encodeURIComponent(q) +
+      "&fields=items(volumeInfo(title,subtitle,authors,publishedDate,publisher,infoLink,industryIdentifiers))&q=" + encodeURIComponent(q) +
       (C.googleBooksKey ? "&key=" + encodeURIComponent(C.googleBooksKey) : "");
     var data = await getJSON(url);
     var items = (data && data.items) || [];
@@ -297,7 +324,10 @@
     if (isbn && best.sim < 0.6) found += " L'ISBN indicato corrisponde a un titolo diverso.";
     else if (best.state === "giallo") found += " Corrispondenza parziale: controllare autore, anno ed edizione.";
     else found += " Edizione e pagine da verificare a mano.";
-    return {state:best.state, found:found, source:"googlebooks", isbnMismatch: !!(isbn && best.sim < 0.6)};
+    var ids = (v.industryIdentifiers||[]), i13 = ids.filter(function(x){ return x.type === "ISBN_13"; })[0];
+    return {state:best.state, found:found, source:"googlebooks", isbnMismatch: !!(isbn && best.sim < 0.6),
+      meta:{source:"Google Libri", type:"book", title: v.title + (v.subtitle ? ": " + v.subtitle : ""), authors:(v.authors||[]).map(lastFirst),
+        year: v.publishedDate ? parseInt(v.publishedDate,10) : null, publisher:v.publisher || "", isbn: i13 ? i13.identifier : "", url:v.infoLink || ""}};
   }
 
   // ---------- Open Library ----------
@@ -319,7 +349,7 @@
     var d = best.d;
     return {state:best.state, source:"openlibrary", found: "Libro in Open Library: " + link("https://openlibrary.org" + d.key, d.title) +
       (d.author_name ? " di " + esc(d.author_name.slice(0,2).join(", ")) : "") +
-      (d.first_publish_year ? " (prima ed. " + d.first_publish_year + ")" : "") + ". Edizione e pagine da verificare a mano."};
+      (d.first_publish_year ? " (prima ed. " + d.first_publish_year + ")" : "") + ". Edizione e pagine da verificare a mano.", meta:{source:"Open Library", type:"book", title:d.title + (d.subtitle ? ": " + d.subtitle : ""), authors:(d.author_name||[]).map(lastFirst), year:d.first_publish_year || null, url:"https://openlibrary.org" + d.key}};
   }
 
   // ---------- ISBN su Open Library ----------
@@ -423,6 +453,74 @@
     return {list:list, results:results};
   }
 
+  // ---------- esportazione per Zotero (RIS) e BibTeX ----------
+  // Titolo e autori dal catalogo quando l'opera è stata trovata; anno, editore e città
+  // dal riferimento, perché indicano l'edizione citata. Nella nota: esito e riferimento originale.
+  var RIS_TYPE = {"journal-article":"JOUR","book-chapter":"CHAP","book":"BOOK","monograph":"BOOK","edited-book":"EDBOOK",
+    "proceedings-article":"CPAPER","dissertation":"THES","report":"RPRT"};
+  var STATE_TXT = {verde:"trovato nei cataloghi", giallo:"da controllare", rosso:"non trovato nei cataloghi", errore:"non verificato"};
+  function buildRecords(list, results, when){
+    var day = (when || new Date()).toLocaleDateString("it-IT");
+    return list.map(function(ref, i){
+      var r = results[i] || {}, p = parseRef(ref), m = (r.state === "verde" || r.state === "giallo") && r.meta ? r.meta : null;
+      var type = m && RIS_TYPE[m.type] ? RIS_TYPE[m.type] : (isNewspaper(ref) ? "NEWS" : (/«[^»]+»,?\s+in\s/.test(ref) ? "CHAP" : (m && m.type === "book" ? "BOOK" : (p.publisher ? "BOOK" : "GEN"))));
+      var tmp = String(r.found || "").replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
+      return {type:type, state:r.state || "errore",
+        title: (m && m.title) || p.title || ref, authors: (m && m.authors && m.authors.length) ? m.authors : (p.authors || []),
+        year: p.year || (m && m.year) || "", publisher: p.publisher || (m && m.publisher) || "", city: p.city || "",
+        container: (m && m.container) || p.container || "", volume: m && m.volume || "", issue: m && m.issue || "", pages: m && m.pages || "",
+        doi: extractDOI(ref) || (m && m.doi) || "", isbn: extractISBN(ref) || (m && m.isbn) || "", url: (m && m.url) || "",
+        note: "REV, controllo automatico del " + day + ": " + STATE_TXT[r.state || "errore"] + (m ? " (" + m.source + ")" : "") + ". " +
+          (r.state === "verde" ? "" : tmp.slice(0, 300) + " ") + "Riferimento originale: " + ref};
+    });
+  }
+  function toRIS(recs){
+    var L = [];
+    recs.forEach(function(x){
+      L.push("TY  - " + x.type);
+      x.authors.forEach(function(a){ L.push("AU  - " + a); });
+      L.push("TI  - " + x.title);
+      if (x.container) L.push((x.type === "JOUR" || x.type === "NEWS" ? "JO  - " : "T2  - ") + x.container);
+      if (x.year) L.push("PY  - " + x.year);
+      if (x.volume) L.push("VL  - " + x.volume);
+      if (x.issue) L.push("IS  - " + x.issue);
+      if (x.pages){ var pg = String(x.pages).split(/[-–]/); L.push("SP  - " + pg[0]); if (pg[1]) L.push("EP  - " + pg[1]); }
+      if (x.publisher) L.push("PB  - " + x.publisher);
+      if (x.city) L.push("CY  - " + x.city);
+      if (x.isbn) L.push("SN  - " + x.isbn);
+      if (x.doi) L.push("DO  - " + x.doi);
+      if (x.url) L.push("UR  - " + x.url);
+      L.push("N1  - " + x.note);
+      L.push("ER  - ", "");
+    });
+    return L.join("\r\n");
+  }
+  var BIB_TYPE = {JOUR:"article", NEWS:"article", CHAP:"incollection", BOOK:"book", EDBOOK:"book", CPAPER:"inproceedings", THES:"phdthesis", RPRT:"techreport", GEN:"misc"};
+  function bibEsc(s){ return String(s).replace(/([&%$#_])/g,"\\$1").replace(/[{}]/g,""); }
+  function toBibTeX(recs){
+    var used = {};
+    return recs.map(function(x){
+      var base = normalize((x.authors[0] || x.title).split(",")[0]).replace(/\s+/g,"").slice(0,20) + (x.year || "");
+      var key = base || "rif", n = used[key] = (used[key] || 0) + 1;
+      if (n > 1) key += String.fromCharCode(96 + n);
+      var f = [];
+      if (x.authors.length) f.push("author = {" + bibEsc(x.authors.join(" and ")) + "}");
+      f.push("title = {" + bibEsc(x.title) + "}");
+      if (x.container) f.push((x.type === "CHAP" ? "booktitle" : x.type === "CPAPER" ? "booktitle" : "journal") + " = {" + bibEsc(x.container) + "}");
+      if (x.year) f.push("year = {" + x.year + "}");
+      if (x.volume) f.push("volume = {" + bibEsc(x.volume) + "}");
+      if (x.issue) f.push("number = {" + bibEsc(x.issue) + "}");
+      if (x.pages) f.push("pages = {" + bibEsc(String(x.pages).replace(/[-–]/,"--")) + "}");
+      if (x.publisher) f.push("publisher = {" + bibEsc(x.publisher) + "}");
+      if (x.city) f.push("address = {" + bibEsc(x.city) + "}");
+      if (x.isbn) f.push("isbn = {" + x.isbn + "}");
+      if (x.doi) f.push("doi = {" + x.doi + "}");
+      if (x.url) f.push("url = {" + x.url + "}");
+      f.push("note = {" + bibEsc(x.note) + "}");
+      return "@" + (BIB_TYPE[x.type] || "misc") + "{" + key + ",\n  " + f.join(",\n  ") + "\n}";
+    }).join("\n\n") + "\n";
+  }
+
   // ---------- ricerca manuale in un clic ----------
   // Per i riferimenti non trovati: link già compilati ai cataloghi da consultare a mano.
   // Il formato OPAC SBN segue l'esempio della guida ufficiale (ricerca per autore).
@@ -449,7 +547,7 @@
     return links;
   }
 
-  var api = {isNewspaper:isNewspaper, parseRef:parseRef, mainTitle:mainTitle, bookSimilarity:bookSimilarity, surnameOf:surnameOf, markDuplicateISBN:markDuplicateISBN, searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
+  var api = {buildRecords:buildRecords, toRIS:toRIS, toBibTeX:toBibTeX, lastFirst:lastFirst, isNewspaper:isNewspaper, parseRef:parseRef, mainTitle:mainTitle, bookSimilarity:bookSimilarity, surnameOf:surnameOf, markDuplicateISBN:markDuplicateISBN, searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
     extractISBN:extractISBN, splitRefs:splitRefs, judge:judge, authorMatch:authorMatch, parseCSV:parseCSV,
     checkOne:checkOne, checkAll:checkAll, _resetCatalogs:function(){ catalogsPromise = null; }};
   root.REV_CHECKER = api;
@@ -461,7 +559,7 @@
   function $(id){ return document.getElementById(id); }
   function init(){
     if (!$("rev-input")) return;
-    var lastReport = "";
+    var lastReport = "", lastOut = null;
     $("rev-max").textContent = C.maxRefs || 30;
     $("rev-run").addEventListener("click", async function(){
       var refs = splitRefs($("rev-input").value), st = $("rev-status");
@@ -471,11 +569,22 @@
       var btn = $("rev-run"); btn.disabled = true;
       var prog = $("rev-progress"); prog.classList.remove("hidden"); prog.value = 0;
       var out = await checkAll(refs, function(d, n){ prog.max = n; prog.value = d; });
-      lastReport = render(out.list, out.results);
+      lastReport = render(out.list, out.results); lastOut = out;
       btn.disabled = false; prog.classList.add("hidden"); st.textContent = "Fatto.";
     });
     $("rev-clear").addEventListener("click", function(){
       $("rev-input").value = ""; $("rev-results").classList.add("hidden"); $("rev-status").textContent = "";
+    });
+    function download(name, text, type){
+      var a = document.createElement("a"), url = URL.createObjectURL(new Blob([text], {type:type}));
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1000);
+    }
+    if ($("rev-ris")) $("rev-ris").addEventListener("click", function(){
+      if (lastOut) download("bibliografia-rev.ris", toRIS(buildRecords(lastOut.list, lastOut.results)), "application/x-research-info-systems");
+    });
+    if ($("rev-bib")) $("rev-bib").addEventListener("click", function(){
+      if (lastOut) download("bibliografia-rev.bib", toBibTeX(buildRecords(lastOut.list, lastOut.results)), "application/x-bibtex");
     });
     $("rev-copy").addEventListener("click", async function(){
       try { await navigator.clipboard.writeText(lastReport); $("rev-copied").textContent = "Copiato."; }
