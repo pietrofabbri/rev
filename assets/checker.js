@@ -44,6 +44,61 @@
     if (d.length === 10 && isbn10CheckOk(d)) return d;
     return null;
   }
+  // ---------- lettura del riferimento ----------
+  // Due stili: APA "Eco, U. (1977). Titolo. Città: Editore."
+  // e italiano "Umberto Eco, Titolo, Città, Editore, 1977, ISBN …".
+  var PARTICLES = new Set("de di da del della dei degli delle d la lo le van von der den mack mac mc st saint".split(" "));
+  function surnameOf(name){
+    name = String(name||"").replace(/\(.*?\)/g,"").replace(/\bet al\.?/i,"").trim();
+    if (name.indexOf(",") > -1) return name.split(",")[0].trim();
+    var w = name.split(/\s+/).filter(Boolean); if (!w.length) return "";
+    var i = w.length - 1;
+    while (i > 0 && PARTICLES.has(w[i-1].toLowerCase().replace(/[’']$/,""))) i--;
+    return w.slice(i).join(" ");
+  }
+  var YEAR_PART = /^(1[5-9]\d\d|20\d\d)\.?$/, ROMAN_YEAR = /^M[MDCLXVI]+\.?$/i;
+  function parseRef(ref){
+    var r = String(ref||"").replace(/https?:\/\/\S+/g,"").replace(/\s+/g," ").trim();
+    var m = r.match(/^(.{2,200}?)\s*\((\d{4})[a-z]?\)\.?\s*(.+)$/);
+    if (m){
+      var first = m[1].split(/;|&| e | and /)[0];
+      return {author:first.trim(), surname:surnameOf(first), title:m[3].split(/\.\s+/)[0].trim(), year:parseInt(m[2],10), style:"apa"};
+    }
+    var parts = r.split(/,\s+/);
+    if (parts.length >= 3){
+      var j = -1;
+      for (var k = parts.length - 1; k >= 2; k--){ if (YEAR_PART.test(parts[k].trim()) || ROMAN_YEAR.test(parts[k].trim())){ j = k; break; } }
+      var title = (j >= 4) ? parts.slice(1, j-2).join(", ") : parts[1];
+      var y = j > -1 ? parseInt(parts[j], 10) : extractYear(r);
+      return {author:parts[0].trim(), surname:surnameOf(parts[0]), title:title.trim(), year: isNaN(y) ? extractYear(r) : y, style:"it"};
+    }
+    return {author:"", surname:"", title:"", year:extractYear(r), style:"?"};
+  }
+  // Titolo principale: prima di ":" o " - ", senza le date tra parentesi.
+  function mainTitle(t){
+    t = String(t||"").replace(/\([^)]*\d{4}[^)]*\)/g,"").trim();
+    var pieces = t.split(/\s[-–—]\s|:\s|\.\s/);
+    for (var i=0;i<pieces.length;i++) if (tokens(pieces[i]).length) return pieces[i].trim();
+    return t;
+  }
+  function share(a, b){ // quota delle parole di a presenti in b
+    var t = tokens(a); if (!t.length) return 0;
+    var r = new Set(tokens(b));
+    return t.filter(function(w){ return r.has(w); }).length / t.length;
+  }
+  // Somiglianza nei due sensi: il titolo trovato deve stare nel riferimento
+  // e il titolo principale del riferimento deve stare nel titolo trovato.
+  // Così un titolo corto ("Documenti", "Garibaldi, Giuseppe") non combacia con tutto.
+  function bookSimilarity(candTitle, candSubtitle, ref, parsed){
+    parsed = parsed || parseRef(ref);
+    var refTitle = parsed.title || ref;
+    var cMain = String(candTitle||"").split(/:\s|\s[-–—]\s/)[0];
+    var a = Math.max(share(candTitle, refTitle), share(cMain, refTitle));
+    if (!parsed.title) return a;
+    var b = share(mainTitle(parsed.title), (candTitle||"") + " " + (candSubtitle||""));
+    return Math.min(a, b);
+  }
+
   function cleanLine(l){ return l.replace(/^\s*(\[\d+\]|\d+[.)]|[-•*])\s*/,"").trim(); }
   function splitRefs(text){ return text.split(/\r?\n/).map(cleanLine).filter(function(l){ return l.length >= 15; }); }
   function authorMatch(names, ref){
@@ -56,7 +111,7 @@
   }
   function judge(sim, aMatch, yMatch){
     if (sim >= 0.85 && (aMatch || yMatch)) return "verde";
-    if (sim >= 0.6) return "giallo";
+    if (sim >= 0.6 && aMatch) return "giallo";
     return null;
   }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -67,11 +122,26 @@
     if (!C.politeEmail || !/crossref|openalex/.test(url)) return url;
     return url + (url.indexOf("?") > -1 ? "&" : "?") + "mailto=" + encodeURIComponent(C.politeEmail);
   }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  // Tempo massimo per catalogo e un secondo tentativo sugli errori temporanei
+  // (rete, timeout, 5xx). Un 429 (quota esaurita) non si ritenta.
   async function getJSON(url){
-    var res = await root.fetch(withPolite(url), {headers:{Accept:"application/json"}});
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return res.json();
+    var tries = 2, delay = C.retryDelayMs == null ? 800 : C.retryDelayMs;
+    for (var attempt = 1; attempt <= tries; attempt++){
+      var ctl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      var timer = ctl ? setTimeout(function(){ ctl.abort(); }, C.timeoutMs || 12000) : null;
+      var opts = {headers:{Accept:"application/json"}}; if (ctl) opts.signal = ctl.signal;
+      try {
+        var res = await root.fetch(withPolite(url), opts);
+        if (res.status === 404) return null;
+        if (res.ok) return await res.json();
+        var err = new Error("HTTP " + res.status); err.status = res.status; throw err;
+      } catch(e){
+        var permanent = e.status && e.status < 500;
+        if (permanent || attempt === tries) throw e;
+      } finally { if (timer) clearTimeout(timer); }
+      await sleep(delay);
+    }
   }
 
   // ---------- cataloghi propri (CSV) ----------
@@ -153,12 +223,12 @@
     return {state:"giallo", found: base + " Il titolo nel riferimento sembra diverso da quello registrato.", source:"crossref"};
   }
   async function checkCrossrefSearch(ref){
-    var data = await getJSON("https://api.crossref.org/works?rows=3&select=DOI,title,author,issued,type&query.bibliographic=" + encodeURIComponent(ref.slice(0,300)));
+    var data = await getJSON("https://api.crossref.org/works?rows=3&select=DOI,title,subtitle,author,issued,type&query.bibliographic=" + encodeURIComponent(ref.slice(0,300)));
     var items = (data && data.message && data.message.items) || [];
-    var year = extractYear(ref), best = null;
+    var parsed = parseRef(ref), year = parsed.year || extractYear(ref), best = null;
     items.forEach(function(it){
       var title = (it.title||[""])[0];
-      var sim = titleSimilarity(title, ref);
+      var sim = bookSimilarity(title, (it.subtitle||[""])[0], ref, parsed);
       var aM = authorMatch((it.author||[]).map(function(a){ return a.family || ""; }).filter(Boolean), ref);
       var yM = !!(year && yearOf(it) && Math.abs(yearOf(it) - year) <= 1);
       var state = judge(sim, aM, yM);
@@ -180,17 +250,18 @@
 
   // ---------- Google Libri ----------
   async function checkGoogleBooks(ref){
-    var isbn = extractISBN(ref);
-    var q = isbn ? "isbn:" + isbn : ref.replace(/https?:\/\/\S+/g,"").slice(0,200);
+    var isbn = extractISBN(ref), parsed = parseRef(ref);
+    var q = isbn ? "isbn:" + isbn :
+      (parsed.title ? mainTitle(parsed.title) + (parsed.surname ? " inauthor:" + parsed.surname : "") : ref.replace(/https?:\/\/\S+/g,"").slice(0,200));
     var url = "https://www.googleapis.com/books/v1/volumes?maxResults=5&printType=books" +
       "&fields=items(volumeInfo(title,subtitle,authors,publishedDate,publisher,infoLink))&q=" + encodeURIComponent(q) +
       (C.googleBooksKey ? "&key=" + encodeURIComponent(C.googleBooksKey) : "");
     var data = await getJSON(url);
     var items = (data && data.items) || [];
-    var year = extractYear(ref), best = null;
+    var year = parsed.year || extractYear(ref), best = null;
     items.forEach(function(it){
       var v = it.volumeInfo || {};
-      var sim = Math.max(titleSimilarity(v.title, ref), titleSimilarity((v.title||"") + " " + (v.subtitle||""), ref));
+      var sim = bookSimilarity(v.title, v.subtitle, ref, parsed);
       var aM = authorMatch((v.authors||[]).map(lastName), ref);
       var py = v.publishedDate ? parseInt(v.publishedDate, 10) : null;
       var yM = !!(year && py && Math.abs(py - year) <= 1);
@@ -212,11 +283,14 @@
 
   // ---------- Open Library ----------
   async function checkOpenLibrary(ref){
-    var data = await getJSON("https://openlibrary.org/search.json?limit=3&fields=title,author_name,first_publish_year,key&q=" + encodeURIComponent(ref.slice(0,200)));
+    var parsed = parseRef(ref);
+    var qs = parsed.title ? "title=" + encodeURIComponent(mainTitle(parsed.title)) + (parsed.surname ? "&author=" + encodeURIComponent(parsed.surname) : "")
+                          : "q=" + encodeURIComponent(ref.slice(0,200));
+    var data = await getJSON("https://openlibrary.org/search.json?limit=5&fields=title,subtitle,author_name,first_publish_year,key&" + qs);
     var docs = (data && data.docs) || [];
-    var year = extractYear(ref), best = null;
+    var year = parsed.year || extractYear(ref), best = null;
     docs.forEach(function(d){
-      var sim = titleSimilarity(d.title, ref);
+      var sim = bookSimilarity(d.title, d.subtitle, ref, parsed);
       var aM = authorMatch((d.author_name||[]).map(lastName), ref);
       var yM = !!(year && d.first_publish_year && Math.abs(d.first_publish_year - year) <= 1);
       var state = judge(sim, aM, yM);
@@ -268,6 +342,20 @@
     return {state:"rosso", found:"Non trovato nei cataloghi consultati (Crossref, Google Libri, Open Library). Può essere un'opera non catalogata online oppure un riferimento errato: va controllato a mano."};
   }
 
+  // Lo stesso ISBN in due righe diverse: almeno una delle due è sbagliata.
+  function markDuplicateISBN(list, results){
+    var seen = {};
+    list.forEach(function(ref, i){ var is = extractISBN(ref); if (is) (seen[is] = seen[is] || []).push(i); });
+    Object.keys(seen).forEach(function(k){
+      var ix = seen[k]; if (ix.length < 2) return;
+      ix.forEach(function(i){
+        var others = ix.filter(function(j){ return j !== i; }).map(function(j){ return j + 1; }).join(", ");
+        var r = results[i] || {state:"errore", found:""};
+        results[i] = {state: r.state === "verde" ? "giallo" : r.state, source:r.source,
+          found: r.found + " <strong>Lo stesso ISBN compare anche alla riga " + others + ": almeno uno dei due riferimenti è sbagliato.</strong>"};
+      });
+    });
+  }
   async function checkAll(refs, onProgress){
     var list = refs.slice(0, C.maxRefs || 30);
     var results = new Array(list.length), next = 0, done = 0;
@@ -282,19 +370,14 @@
     var n = Math.max(1, Math.min(C.concurrency || 3, list.length));
     var ws = []; for (var k=0;k<n;k++) ws.push(worker());
     await Promise.all(ws);
+    markDuplicateISBN(list, results);
     return {list:list, results:results};
   }
 
   // ---------- ricerca manuale in un clic ----------
   // Per i riferimenti non trovati: link già compilati ai cataloghi da consultare a mano.
   // Il formato OPAC SBN segue l'esempio della guida ufficiale (ricerca per autore).
-  function firstSurname(ref){
-    var head = ref.split(",")[0].replace(/\(.*?\)/g,"").trim();
-    var words = head.split(/\s+/).filter(Boolean);
-    if (words.length === 1) return words[0];            // "Eco, U."  -> Eco
-    if (words.length <= 3) return words[words.length-1]; // "Umberto Eco, …" -> Eco
-    return words[0] || "";
-  }
+  function firstSurname(ref){ return parseRef(ref).surname || ""; }
   function searchLinks(ref){
     var q = ref.replace(/https?:\/\/\S+/g,"").slice(0,200);
     var links = [];
@@ -309,7 +392,7 @@
     return links;
   }
 
-  var api = {searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
+  var api = {parseRef:parseRef, mainTitle:mainTitle, bookSimilarity:bookSimilarity, surnameOf:surnameOf, markDuplicateISBN:markDuplicateISBN, searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
     extractISBN:extractISBN, splitRefs:splitRefs, judge:judge, authorMatch:authorMatch, parseCSV:parseCSV,
     checkOne:checkOne, checkAll:checkAll, _resetCatalogs:function(){ catalogsPromise = null; }};
   root.REV_CHECKER = api;
