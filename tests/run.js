@@ -191,8 +191,8 @@ test("ISBN di un altro libro: il verde del titolo non basta", async () => {
 });
 test("ISBN giusto confermato da Open Library: verde", async () => {
   setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("isbn=")
-    ? reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], key: "/works/OL1W" }] })
-    : reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
+    ? reply(200, { docs: [{ title: "Il Risorgimento italiano (Economica Laterza) (Italian Edition)", author_name: ["Alberto M. Banti"], key: "/works/OL1W" }] })
+    : reply(200, { docs: [{ title: "Il Risorgimento italiano (Economica Laterza) (Italian Edition)", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
   const r = await X.checkOne(BANTI);
   assert.strictEqual(r.state, "verde");
 });

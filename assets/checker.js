@@ -91,6 +91,8 @@
   // Così un titolo corto ("Documenti", "Garibaldi, Giuseppe") non combacia con tutto.
   function bookSimilarity(candTitle, candSubtitle, ref, parsed){
     parsed = parsed || parseRef(ref);
+    // I cataloghi aggiungono collana ed edizione tra parentesi: "(Economica Laterza) (Italian Edition)".
+    candTitle = String(candTitle||"").replace(/\s*\([^)]*\)/g,"").trim();
     var refTitle = parsed.title || ref;
     var cMain = String(candTitle||"").split(/:\s|\s[-–—]\s/)[0];
     var a = Math.max(share(candTitle, refTitle), share(cMain, refTitle));
@@ -311,7 +313,10 @@
     var data = await getJSON("https://openlibrary.org/search.json?limit=1&fields=title,subtitle,author_name,key&isbn=" + isbn);
     var d = data && data.docs && data.docs[0];
     if (!d) return {known:false};
-    return {known:true, match: bookSimilarity(d.title, d.subtitle, ref) >= 0.6, title:d.title, key:d.key};
+    // Basta che il titolo principale del riferimento stia nel titolo dell'ISBN.
+    var p = parseRef(ref), main = mainTitle(p.title || ref);
+    var match = share(main, (d.title||"") + " " + (d.subtitle||"")) >= 0.6 || bookSimilarity(d.title, d.subtitle, ref, p) >= 0.6;
+    return {known:true, match: match, title:d.title, key:d.key};
   }
 
   // ---------- orchestrazione ----------
