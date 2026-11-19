@@ -19,9 +19,12 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
   - **pagine tesi e libro** con la stessa struttura: che cosa ricevi, prezzo, come si ordina, dettagli richiudibili;
   - **piè di pagina** con registro, condizioni, privacy e partner;
   - **colori** della matita rossa e blu dei correttori, solo caratteri di sistema (nessun font esterno), risultati leggibili anche su telefono.
+- 19 nov, **caricare la tesi** (pull request #9): file Word, PDF o di testo letti nel browser, senza inviarli a nessuno. La bibliografia finale va da sola nella scheda. Per i file Word, confronto tra note e bibliografia. Per i PDF si usa pdf.js 4.4.168 (Mozilla, licenza Apache 2.0) in `assets/vendor/pdfjs/`, caricato solo quando serve. Test automatici: 29.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
+Si può incollare la bibliografia oppure caricare il file della tesi (Word, PDF, testo): il file si legge nel browser (`assets/estrai.js`) e non lascia il computer del visitatore. Dal file si prende la sezione intitolata "Bibliografia" o "Riferimenti bibliografici"; per i file Word si confrontano anche note e bibliografia, per cognome.
+
 Controlla fino a 30 riferimenti nel browser del visitatore, nell'ordine:
 1. cataloghi propri in CSV, se configurati (oggi nessuno; in futuro l'archivio, D-12);
 2. Crossref, Google Libri e controllo dell'ISBN su Open Library, in parallelo (libri cercati per titolo e cognome);

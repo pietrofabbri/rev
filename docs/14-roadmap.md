@@ -1,6 +1,6 @@
 # Roadmap: preparazione e tre soglie
 
-Ultimo aggiornamento: 2026-11-18 · Revisione: a ogni soglia · Supera la roadmap a 6 fasi del 14 nov (D-23)
+Ultimo aggiornamento: 2026-11-19 · Revisione: a ogni soglia · Supera la roadmap a 6 fasi del 14 nov (D-23)
 
 Nessuna spesa prima di aver incassato. A ogni soglia **si accende una cosa sola**. I passi dettagliati sono in [18](18-revisione-critica.md); i numeri in euro e ore sono in [12](12-metriche.md).
 
@@ -13,6 +13,20 @@ Nessuna spesa prima di aver incassato. A ogni soglia **si accende una cosa sola*
 
 ## Criterio di stop
 Se a 3 mesi dall'uscita dall'anteprima non c'è nessun lavoro pagato, nonostante i cambiamenti di messaggio, prezzo e canale, ci si ferma e si rivede l'ipotesi.
+
+## Idee per il sito, con la loro soglia (19 nov)
+Una sola cosa nuova a ogni soglia (D-23). Ordine scelto in base a quanto tolgono attrito a chi paga.
+
+| Idea | Che cosa fa | Soglia | Stato |
+|---|---|---|---|
+| Caricare la tesi | Word, PDF o testo, letti nel browser: la bibliografia finale va da sola nella scheda | Prima del primo incasso | **Fatto il 19 nov** |
+| Note e bibliografia allineate | Autori citati in nota e assenti in bibliografia, voci mai citate, "Ibidem" nella prima nota (solo file Word) | Prima del primo incasso | **Fatto il 19 nov** |
+| Esportare i riferimenti trovati | Formato Zotero (RIS) o BibTeX, per lo studente | Prima del primo incasso, se resta tempo | Da fare: piccolo |
+| Link citati | La pagina risponde ancora? Se no, rimando alla copia d'archivio (servizio Wayback Machine) | Prima del primo incasso, se resta tempo | Da fare: verificare che il servizio d'archivio risponda dal browser |
+| Ricerca automatica in SBN | I libri italiani che oggi risultano rossi falsi (prova a secco, R-50) | Soglia 2 (10 lavori) | Prima leggere le condizioni d'uso di ICCU |
+| Fonte-frase sugli articoli ad accesso aperto | Mostra il passo della fonte accanto alla frase, quando l'articolo è leggibile gratis | Soglia 2 o 3, per le tesi scientifiche | Da fare |
+| Citazioni tra virgolette | Confronto parola per parola con la fonte consultabile | Soglia 3 | Da fare |
+| **Secondo servizio con text-integrity** | Verifica della revisione: numeri, date, valute e unità uguali tra originale e testo tradotto, rivisto o riscritto con un chatbot. Primo pubblico: traduzioni per gli editori | **Solo dopo una valutazione pubblicata** di text-integrity | In attesa. text-integrity è sperimentale, con falsi allarmi aperti; è in Python, mentre il sito è statico in JavaScript, quindi serve portarlo nel browser o rivedere D-13 |
 
 ## Lungo periodo (solo se arrivano le condizioni, nessun lavoro oggi)
 - Archivio collegato allo strumento, oltre 2.000 voci (D-12).
