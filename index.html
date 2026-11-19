@@ -4,68 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>REV · Controlla gratis la tua bibliografia</title>
-<meta name="description" content="Incolla la bibliografia: in un minuto sai quali fonti esistono, quali hanno dati sbagliati e quali vanno controllate. Gratis, senza registrazione.">
+<meta name="description" content="Incolla la bibliografia: in un minuto sai quali fonti esistono, quali hanno un dato che non torna e quali vanno cercate a mano. Gratis, senza registrazione.">
 <meta property="og:title" content="REV · Le tue fonti esistono davvero?">
-<meta property="og:description" content="Controllo gratuito della bibliografia, verifica completa con firma umana. Paghi solo gli errori trovati.">
+<meta property="og:description" content="Controllo gratuito della bibliografia. Per tesi e libri, la verifica completa con correzioni pronte e firma di chi ha verificato.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <main class="wrap">
-  <section class="hero">
-    <h1>Le tue fonti esistono davvero?</h1>
-    <p class="lead">Incolla la bibliografia e premi Controlla. In un minuto sai quali fonti esistono e quali no. Gratis, senza registrazione (massimo <span id="rev-max">30</span> riferimenti).</p>
-  </section>
+  <h1>Le tue fonti esistono davvero?</h1>
+  <p class="lead">Incolla la bibliografia e premi <strong>Controlla le fonti</strong>. In un minuto sai quali opere si trovano nei cataloghi, quali hanno un dato che non torna e quali vanno cercate a mano. Gratis, senza registrazione.</p>
 
-  <section class="checker card" aria-labelledby="t-check">
-    <h2 id="t-check" style="margin-top:0">Controllo gratuito</h2>
-    <label for="rev-input" class="small">Un riferimento per riga, in qualsiasi stile (APA, Chicago, note all'italiana…). Se c'è un DOI o un ISBN, il controllo è più preciso.</label>
-    <textarea id="rev-input" spellcheck="false" placeholder="Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.&#10;Vaswani, A. et al. (2017). Attention Is All You Need. NeurIPS.&#10;Rossi, M. (2021). Un libro che forse non esiste. Roma: Editore Immaginario."></textarea>
+  <section class="scheda" aria-labelledby="t-check">
+    <div class="scheda-head"><span id="t-check">Controllo gratuito</span><span>fino a <span id="rev-max">30</span> riferimenti</span></div>
+    <label for="rev-input">Un riferimento per riga, in qualsiasi stile</label>
+    <textarea id="rev-input" spellcheck="false" placeholder="Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.&#10;CRAINZ, Guido, Il paese mancato, Roma, Donzelli, 2003.&#10;Vaswani, A. et al. (2017). Attention Is All You Need. NeurIPS."></textarea>
     <div class="actions">
-      <button class="btn" id="rev-run" type="button">Controlla</button>
+      <button class="btn" id="rev-run" type="button">Controlla le fonti</button>
       <button class="btn ghost" id="rev-clear" type="button">Svuota</button>
       <span id="rev-status" class="small" role="status" aria-live="polite"></span>
     </div>
     <progress id="rev-progress" class="hidden" value="0" max="1"></progress>
+    <ul class="legend" aria-label="Come leggere gli esiti">
+      <li><span class="pill g">Trovato</span> l'opera è nei cataloghi</li>
+      <li><span class="pill y">Da controllare</span> un dato non torna, o un catalogo non ha risposto</li>
+      <li><span class="pill r">Non trovato</span> nessun catalogo la conosce: può esistere lo stesso</li>
+    </ul>
+  </section>
+  <p class="small">I riferimenti partono dal tuo browser verso Crossref, Google Libri, Open Library e OpenAlex. Noi non li riceviamo e non li conserviamo. <a href="privacy.html">Privacy</a></p>
 
-    <div id="rev-results" class="hidden">
-      <div id="rev-summary"></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>Esito</th><th>Riferimento</th><th>Che cosa abbiamo trovato</th></tr></thead>
-          <tbody id="rev-rows"></tbody>
-        </table>
-      </div>
-      <div class="actions">
-        <button class="btn ghost" id="rev-copy" type="button">Copia il rapporto</button>
-        <span id="rev-copied" class="small" role="status"></span>
-      </div>
-      <div class="cta" id="rev-cta">
-        <h3>Riferimenti da approfondire: <span id="rev-cta-count">0</span></h3>
-        <p>Il controllo automatico dice se una fonte esiste. La <strong>verifica completa</strong> controlla anche che i dati siano esatti e che la fonte dica davvero ciò che il testo le attribuisce. Ricevi le correzioni pronte e la firma di chi ha verificato. Paghi <span data-price="perError"></span> per ogni errore confermato, con la prova allegata, e niente se non ci sono errori.</p>
-        <a class="btn" href="servizio.html">Scopri la verifica completa</a>
+  <section id="rev-results" class="results hidden" aria-live="polite">
+    <h2 class="hidden">Risultato del controllo</h2>
+    <p id="rev-summary" class="summary"></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th class="num">#</th><th>Esito</th><th>Riferimento</th><th>Che cosa abbiamo trovato</th></tr></thead>
+        <tbody id="rev-rows"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="rev-copy" type="button">Copia il risultato</button>
+      <span id="rev-copied" class="small" role="status"></span>
+    </div>
+
+    <div class="next" id="rev-cta">
+      <h3 id="rev-cta-title">Riferimenti da controllare a mano: <span id="rev-cta-count">0</span></h3>
+      <p>Lo facciamo noi: cerchiamo ogni fonte nei cataloghi delle biblioteche, correggiamo i dati sbagliati e firmiamo il rapporto. Consegna in <span data-price="deliveryDays" data-num></span> giorni lavorativi.</p>
+      <div class="doors">
+        <div class="door">
+          <h3>Stai finendo la tesi</h3>
+          <div class="price"><span data-price="thesis"></span></div>
+          <p class="small">prezzo fisso fino a <span data-price="thesisMaxRefs" data-num></span> riferimenti</p>
+          <a class="btn" href="tesi.html">Verifica della tesi</a>
+        </div>
+        <div class="door">
+          <h3>Stai per pubblicare un libro</h3>
+          <div class="price"><span data-price="perError"></span></div>
+          <p class="small">per ogni errore trovato e dimostrato, niente se non ce ne sono</p>
+          <a class="btn ghost" href="servizio.html">Verifica di un libro</a>
+        </div>
       </div>
     </div>
-    <p class="small" style="margin-top:16px"><strong>Come leggere gli esiti.</strong> <span class="pill g">Trovato</span> la fonte esiste. <span class="pill y">Da controllare</span> esiste qualcosa di simile, ma un dato non torna. <span class="pill r">Non trovato</span> nessun catalogo la conosce: può esistere lo stesso, usa i link "Cerca a mano".</p>
-    <p class="small">I riferimenti vengono inviati, dal tuo browser, a Crossref, Google Libri, Open Library e OpenAlex. Non li conserviamo. <a href="privacy.html">Dettagli</a>.</p>
   </section>
 
-  <h2>Dal controllo gratuito alla verifica firmata</h2>
+  <h2>Come si arriva a una bibliografia verificata</h2>
   <ol class="steps">
-    <li><strong>Controlla gratis</strong>Qui sopra, quante volte vuoi. Ti dice quali fonti si trovano nei cataloghi.</li>
-    <li><strong>Chiedi la verifica completa</strong>Dati bibliografici, coerenza tra fonte e frase, correzioni pronte. Consegna in <span data-price="deliveryDays" data-num></span> giorni lavorativi. <a href="servizio.html">Prezzi</a></li>
-    <li><strong>Mostra il risultato</strong>Ogni verifica ha un numero nel <a href="registro.html">registro pubblico</a>, che chiunque può controllare.</li>
+    <li><strong>Controlli qui, gratis</strong>Quante volte vuoi. Vedi subito quali fonti i cataloghi conoscono.</li>
+    <li><strong>Ci mandi la bibliografia</strong>Della tesi o del libro. Il prezzo lo sai prima di iniziare.</li>
+    <li><strong>Ricevi il rapporto firmato</strong>Ogni errore con la prova e la correzione pronta, in <span data-price="deliveryDays" data-num></span> giorni lavorativi.</li>
   </ol>
 
-  <h2>Per chi</h2>
-  <div class="grid">
-    <div class="card"><h3 style="margin-top:0">Editori e autori</h3><p>Saggistica, manuali, libri universitari e professionali. Prima della stampa e prima delle ristampe.</p><a href="editori.html">Per gli editori →</a></div>
-    <div class="card"><h3 style="margin-top:0">Studenti</h3><p>Tesi di laurea e di dottorato: le fonti a posto prima della consegna, a prezzo fisso. Controlliamo solo le fonti, mai il testo.</p><a href="tesi.html">Verifica della tesi →</a></div>
-    <div class="card"><h3 style="margin-top:0">Redattori e agenzie</h3><p>Aggiungi la verifica ai tuoi servizi, senza lavoro in più, con una commissione su ogni lavoro.</p><a href="partner.html">Diventa partner →</a></div>
+  <h2>Che cosa ti serve</h2>
+  <div class="doors">
+    <a class="door" href="tesi.html" style="text-decoration:none;color:inherit">
+      <h3>Verifica della tesi</h3>
+      <p>Le fonti a posto prima della consegna, a prezzo fisso. Controlliamo solo le fonti, mai il testo.</p>
+      <span class="btn ghost">Vedi la verifica della tesi</span>
+    </a>
+    <a class="door" href="servizio.html" style="text-decoration:none;color:inherit">
+      <h3>Verifica di un libro</h3>
+      <p>Per saggi e manuali, prima della stampa: dati esatti e fonti che dicono davvero ciò che il testo afferma.</p>
+      <span class="btn ghost">Vedi la verifica di un libro</span>
+    </a>
   </div>
-
-  <h2>Perché ora</h2>
-  <p>Gli assistenti di intelligenza artificiale scrivono bibliografie credibili che a volte contengono opere mai esistite, o articoli veri attribuiti a pagine sbagliate. Un controllo automatico trova molti di questi errori, non tutti. Per il resto serve una persona che controlli la fonte e firmi il risultato. <a href="metodo.html">Come lavoriamo</a>.</p>
 </main>
 <script src="assets/config.js"></script>
 <script src="assets/site.js"></script>
