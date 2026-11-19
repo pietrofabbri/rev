@@ -248,6 +248,49 @@ test("PDF: righe a capo riunite in una voce", () => {
   assert.strictEqual(bib.length, 2);
   assert.ok(bib[0].endsWith("Donzelli, 2003."));
 });
+// ---- esportazione ----
+test("autori e editore letti dal riferimento", () => {
+  const a = X.parseRef("MASONI, Tullio, VECCHI, Paolo, Cinenotizie in poesia e prosa, Torino, Lindau, 2000, p. 3.");
+  assert.deepStrictEqual(a.authors, ["Masoni, Tullio", "Vecchi, Paolo"]);
+  assert.strictEqual(a.publisher, "Lindau"); assert.strictEqual(a.city, "Torino");
+  const b = X.parseRef("Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.");
+  assert.deepStrictEqual(b.authors, ["Eco, U."]); assert.strictEqual(b.publisher, "Bompiani"); assert.strictEqual(b.city, "Milano");
+  assert.strictEqual(X.lastFirst("Denis Mack Smith"), "Mack Smith, Denis");
+  const c = X.parseRef("DELLA CASA, Stefano, «Il cinema militante», in Storia del cinema italiano, Venezia, Marsilio, 2002.");
+  assert.deepStrictEqual(c.authors, ["Della Casa, Stefano"]); assert.strictEqual(c.container, "Storia del cinema italiano");
+});
+test("RIS e BibTeX: dati del catalogo, edizione del riferimento, esito in nota", () => {
+  const list = ["Eco, U. (1977). Come si fa una tesi di laurea. Milano: Bompiani.",
+    "Rossi, M. (2021). Un libro che forse non esiste. Roma: Editore Immaginario."];
+  const results = [
+    { state: "verde", found: "Libro in Google Libri", meta: { source: "Google Libri", type: "book", title: "Come si fa una tesi di laurea", authors: ["Eco, Umberto"], year: 2017, publisher: "La nave di Teseo", isbn: "9788893442312" } },
+    { state: "rosso", found: "Non trovato nei cataloghi consultati." }];
+  const recs = X.buildRecords(list, results, new Date(2026, 10, 19));
+  assert.strictEqual(recs[0].year, 1977);                 // edizione citata, non quella del catalogo
+  assert.strictEqual(recs[0].publisher, "Bompiani");
+  assert.deepStrictEqual(recs[0].authors, ["Eco, Umberto"]);
+  const ris = X.toRIS(recs);
+  assert.ok(ris.includes("TY  - BOOK\r\nAU  - Eco, Umberto\r\nTI  - Come si fa una tesi di laurea"));
+  assert.ok(ris.includes("N1  - REV, controllo automatico del 19/11/2026: non trovato nei cataloghi."));
+  assert.strictEqual((ris.match(/ER  - /g) || []).length, 2);
+  const bib = X.toBibTeX(recs);
+  assert.ok(bib.startsWith("@book{eco1977,"));
+  assert.ok(bib.includes("author = {Eco, Umberto}") && bib.includes("publisher = {Bompiani}"));
+  assert.ok(bib.includes("@book{rossi2021,") || bib.includes("@misc{rossi2021,"));
+});
+test("DOI di DataCite (arXiv): non è rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(404, {}),
+    "api.datacite.org/dois/": reply(200, { data: { attributes: { titles: [{ title: "Attention Is All You Need" }], publicationYear: 2017,
+      creators: [{ familyName: "Vaswani", givenName: "Ashish" }] } } }) });
+  const r = await X.checkOne("Vaswani, A., Shazeer, N. et al. (2017). Attention Is All You Need. https://doi.org/10.48550/arXiv.1706.03762");
+  assert.strictEqual(r.state, "verde"); assert.ok(r.found.includes("DataCite"));
+  assert.deepStrictEqual(X.parseRef("Vaswani, A., Shazeer, N. et al. (2017). Attention Is All You Need.").authors, ["Vaswani, A.", "Shazeer, N."]);
+});
+test("DOI assente da Crossref e da DataCite: rosso", async () => {
+  setup({ ...EMPTY, "api.crossref.org/works/10.": reply(404, {}), "api.datacite.org/dois/": reply(404, {}) });
+  const r = await X.checkOne("Bianchi (2019). Studio inventato. doi:10.1234/nonesiste");
+  assert.strictEqual(r.state, "rosso");
+});
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;
   setup({ ...EMPTY, "api.crossref.org/works/10.": () => (++n === 1 ? reply(503, {}) :
