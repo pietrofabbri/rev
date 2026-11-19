@@ -31,17 +31,13 @@ window.REV_CONFIG = {
     minimum: 30,
     capDefault: 350,
     capDefaultRefs: 300,
-    capLaunch: 250,
-    launchClients: 3,
     thesis: 29,
     thesisMaxRefs: 100,
     thesisClaims: 10,
-    dossier: 150,
-    deliveryHours: 72,
+    deliveryDays: 3,         // giorni lavorativi dal ricevimento completo dei file
     delayDiscount: 20,
     partnerCommission: 20,
-    partnerMonths: 12,
-    referralCredit: 10
+    partnerMonths: 12
   },
 
   methodVersion: "1.0",

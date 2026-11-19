@@ -49,7 +49,7 @@
     '<a href="mailto:' + C.contactEmail + '">' + C.contactEmail + "</a>";
   fw.appendChild(el("div",{}, who));
   fw.appendChild(el("div",{},
-    '<a href="editori.html">Editori</a> · <a href="partner.html">Partner</a> · ' +
+    '<a href="partner.html">Partner</a> · ' +
     '<a href="condizioni.html">Condizioni</a> · <a href="privacy.html">Privacy</a> · ' +
     '<a href="registro.html">Registro delle verifiche</a>'));
   foot.appendChild(fw);

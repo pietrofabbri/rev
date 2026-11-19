@@ -1,6 +1,6 @@
 # Registro delle decisioni
 
-Ultimo aggiornamento: 2026-11-18
+Ultimo aggiornamento: 2026-11-19
 
 Ogni decisione ha un numero, una data, il motivo e lo stato (attiva, sospesa, in revisione, superata). Non si cancella nulla: una decisione cambiata viene marcata "superata da D-xx".
 
@@ -32,9 +32,10 @@ Ogni decisione ha un numero, una data, il motivo e lo stato (attiva, sospesa, in
 | D-24 | 2026-11-18 | Prima di fissare i prezzi si cronometra un lavoro vero (passo 4 di 18) | Tutti i tempi erano stime; con 29 € e 1-1,5 ore l'obiettivo di 40 €/ora non regge | Attiva |
 | D-25 | 2026-11-18 | Ordine con link di pagamento al posto dell'email | Meno attrito per chi ha una scadenza | **Approvata in linea di principio, non attiva** (P-04): parte al passo 10 di 18, dopo commercialista e condizioni riviste |
 | D-26 | 2026-11-18 | Tutta la documentazione, strategica e non, è pubblicata nella cartella `docs/` del repository pubblico pietrofabbri/rev. Il progetto claude.ai e `docs/` si aggiornano insieme a ogni modifica | Scelta del promotore: una copia versionata e consultabile ovunque. Si accetta che decisioni, prezzi in discussione, commissioni e rischi siano leggibili da chiunque, anche dai concorrenti, e che la cronologia di git li conservi | Attiva; supera D-14 |
+| D-27 | 2026-11-19 | **Soglia minima: 40 € per ora umana.** Ogni prezzo si calcola da qui, sui minuti misurati (o stimati, finché mancano le misure), con un margine sopra la soglia. Un lavoro che a preventivo scende sotto la soglia non si accetta a quel prezzo | Decisione del promotore: il lavoro deve essere pagato almeno così | Attiva; vincola il passo 5 di 18 e il listino in 02 |
 
 ## Decisioni aperte
-- **Prezzo fisso a fasce (P-01):** contenuto, prezzo e garanzie di ogni fascia, dopo il lavoro cronometrato. Passo 5 di 18.
+- **Prezzo fisso a fasce (P-01):** proposta del 19 nov in 02, costruita su D-27. Da confermare (passo 5 di 18).
 - **D-11** chi possiede l'archivio: responsabile, promotore o una futura società. Raccomandazione: il responsabile, con licenza d'uso al promotore. Si tiene in formato aperto, così resta trasferibile.
 - **Account del sito** (R-28): se è del promotore, il repository passa al responsabile prima di uscire dall'anteprima.
 - Nome del servizio e dominio.

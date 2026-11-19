@@ -1,6 +1,6 @@
 # Metriche e revisione settimanale
 
-Ultimo aggiornamento: 2026-11-18 · **Unica fonte dei numeri**
+Ultimo aggiornamento: 2026-11-19 · **Unica fonte dei numeri**
 
 ## Il foglio (uno solo)
 Un foglio di calcolo con tre schede:
@@ -12,8 +12,8 @@ Un foglio di calcolo con tre schede:
 | Metrica | Obiettivo iniziale (stima da verificare) | Se va male |
 |---|---|---|
 | Lavori pagati in 6 settimane | 3 | Cambiare un solo elemento: messaggio, poi prezzo, poi canale |
-| Minuti umani per lavoro | ≤ 43 a 29 €; ≤ 90 nella fascia alta | Rivedere il passo più lento in 04 |
-| Ricavo per ora umana | ≥ 40 € | Alzare la fascia o ridurre ciò che comprende (02) |
+| Minuti umani per lavoro | Coerenti con la fascia: circa 90 fino a 50 fonti, 160 fino a 100 (proposta del 19 nov in 02) | Rivedere il passo più lento in 04 o la fascia |
+| Ricavo per ora umana | **Soglia minima 40 € (D-27)**; prezzi calcolati a 45 € | Sotto 40: alzare la fascia o ridurre ciò che comprende (02). Un preventivo sotto 40 non si accetta |
 | Rimborsi chiesti | < 10% dei lavori | Rileggere i rapporti contestati: promessa, contenuto o tempi? |
 | Contestazioni accolte (solo verifica a errore, finché esiste) | < 5% degli errori addebitati | Rivedere la regola delle prove |
 | Clienti che tornano entro 6 mesi | ≥ 30% | Rivedere l'offerta |
