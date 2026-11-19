@@ -491,15 +491,18 @@
       var tr = document.createElement("tr");
       var more = r.state === "verde" ? "" : '<div class="small" style="margin-top:6px">Cerca a mano: ' +
         searchLinks(list[i]).map(function(l){ return link(l[1], l[0]); }).join(" · ") + "</div>";
-      tr.innerHTML = "<td>" + (i+1) + '</td><td><span class="pill ' + lab[1] + '">' + lab[0] + "</span></td><td>" + esc(list[i]) + "</td><td>" + r.found + more + "</td>";
+      tr.innerHTML = '<td class="num">' + (i+1) + '</td><td><span class="pill ' + lab[1] + '">' + lab[0] + '</span></td><td class="ref">' + esc(list[i]) + "</td><td>" + r.found + more + "</td>";
       rows.appendChild(tr);
       var tmp = document.createElement("div"); tmp.innerHTML = r.found;
       lines.push((i+1) + ". [" + lab[0] + "] " + list[i] + "\n   " + tmp.textContent);
     });
-    $("rev-summary").innerHTML = '<span class="pill g">' + counts.verde + ' trovati</span><span class="pill y">' +
-      (counts.giallo + counts.errore) + ' da controllare</span><span class="pill r">' + counts.rosso + " non trovati</span>";
+    var n = results.length, open = counts.giallo + counts.rosso + counts.errore;
+    $("rev-summary").innerHTML = "Su " + n + " riferiment" + (n === 1 ? "o" : "i") + ": <strong>" + counts.verde + " trovat" + (counts.verde === 1 ? "o" : "i") + "</strong>, " +
+      (counts.giallo + counts.errore) + " da controllare, " + counts.rosso + " non trovat" + (counts.rosso === 1 ? "o" : "i") + ".";
     $("rev-results").classList.remove("hidden");
-    $("rev-cta-count").textContent = counts.giallo + counts.rosso + counts.errore;
+    if ($("rev-cta-title")) $("rev-cta-title").innerHTML = open ? 'Riferimenti da controllare a mano: <span id="rev-cta-count">' + open + "</span>"
+      : "Tutte le fonti sono nei cataloghi";
+    else $("rev-cta-count").textContent = open;
     return "Controllo automatico della bibliografia (" + new Date().toLocaleDateString("it-IT") + ")\n\n" + lines.join("\n") +
       "\n\n\"Non trovato\" non significa \"inesistente\". Controllo automatico: non valuta il contenuto delle fonti.";
   }

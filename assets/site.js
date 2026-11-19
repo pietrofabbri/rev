@@ -2,10 +2,11 @@
 (function(){
   var C = window.REV_CONFIG || {};
   var P = C.prices || {};
+  // Menu per bisogno: controllare gratis, una tesi, un libro, capire il metodo.
   var NAV = [
-    ["index.html","Controllo gratuito"],
-    ["servizio.html","Prezzi"],
+    ["index.html","Controlla gratis"],
     ["tesi.html","Tesi"],
+    ["servizio.html","Libri"],
     ["metodo.html","Come lavoriamo"]
   ];
   var isPreview = !(C.contactEmail && C.operatorName && C.vatNumber);
@@ -26,7 +27,8 @@
   // Header
   var head = el("header",{class:"site-head"});
   var hw = el("div",{class:"wrap"});
-  hw.appendChild(el("a",{class:"brand",href:"index.html"}, (C.name||"REV") + "<span>" + (C.tagline||"") + "</span>"));
+  hw.appendChild(el("a",{class:"brand",href:"index.html","aria-label":(C.name||"REV") + ", pagina iniziale"},
+    "<b>" + (C.name||"REV") + "</b><span>" + (C.tagline||"") + "</span>"));
   var nav = el("nav",{class:"nav","aria-label":"Sezioni"});
   NAV.forEach(function(n){
     var a = el("a",{href:n[0]}, n[1]);
@@ -45,13 +47,13 @@
   var foot = el("footer",{class:"site-foot"});
   var fw = el("div",{class:"wrap"});
   var who = isPreview ? "Fornitore: dati in arrivo." :
-    "Servizio fornito da " + C.operatorName + " · P.IVA " + C.vatNumber + " · " +
+    "Servizio fornito da " + C.operatorName + ", P.IVA " + C.vatNumber + ". " +
     '<a href="mailto:' + C.contactEmail + '">' + C.contactEmail + "</a>";
   fw.appendChild(el("div",{}, who));
-  fw.appendChild(el("div",{},
-    '<a href="partner.html">Partner</a> · ' +
-    '<a href="condizioni.html">Condizioni</a> · <a href="privacy.html">Privacy</a> · ' +
-    '<a href="registro.html">Registro delle verifiche</a>'));
+  fw.appendChild(el("nav",{"aria-label":"Altre pagine"},
+    '<a href="registro.html">Registro delle verifiche</a>' +
+    '<a href="condizioni.html">Condizioni</a><a href="privacy.html">Privacy</a>' +
+    '<a href="partner.html">Partner</a>'));
   foot.appendChild(fw);
   document.body.appendChild(foot);
 
@@ -74,8 +76,6 @@
     if (isPreview){
       a.removeAttribute("href");
       a.setAttribute("aria-disabled","true");
-      a.style.opacity = ".55";
-      a.style.cursor = "not-allowed";
       a.title = "Il servizio a pagamento non è ancora attivo";
       return;
     }
