@@ -278,7 +278,7 @@
     if (isbn && best.sim < 0.6) found += " L'ISBN indicato corrisponde a un titolo diverso.";
     else if (best.state === "giallo") found += " Corrispondenza parziale: controllare autore, anno ed edizione.";
     else found += " Edizione e pagine da verificare a mano.";
-    return {state:best.state, found:found, source:"googlebooks"};
+    return {state:best.state, found:found, source:"googlebooks", isbnMismatch: !!(isbn && best.sim < 0.6)};
   }
 
   // ---------- Open Library ----------
@@ -303,6 +303,17 @@
       (d.first_publish_year ? " (prima ed. " + d.first_publish_year + ")" : "") + ". Edizione e pagine da verificare a mano."};
   }
 
+  // ---------- ISBN su Open Library ----------
+  // A che titolo corrisponde l'ISBN indicato? Serve a non dare verde
+  // a un riferimento giusto nel titolo ma con l'ISBN di un altro libro.
+  async function checkISBN(ref){
+    var isbn = extractISBN(ref); if (!isbn) return null;
+    var data = await getJSON("https://openlibrary.org/search.json?limit=1&fields=title,subtitle,author_name,key&isbn=" + isbn);
+    var d = data && data.docs && data.docs[0];
+    if (!d) return {known:false};
+    return {known:true, match: bookSimilarity(d.title, d.subtitle, ref) >= 0.6, title:d.title, key:d.key};
+  }
+
   // ---------- orchestrazione ----------
   var RANK = {verde:3, giallo:2, rosso:1};
   async function safe(fn){
@@ -325,18 +336,33 @@
     if (loc.res && loc.res.state === "verde") return loc.res;
     cands.push(loc.res);
 
-    var both = await Promise.all([
+    var round1 = await Promise.all([
       safe(function(){ return checkCrossrefSearch(ref); }),
-      safe(function(){ return checkGoogleBooks(ref); })
+      safe(function(){ return checkGoogleBooks(ref); }),
+      safe(function(){ return checkISBN(ref); })
     ]);
-    both.forEach(function(x){ if (x.err) errors++; cands.push(x.res); });
+    var isbnInfo = round1[2].res || null;
+    round1.slice(0,2).forEach(function(x){ if (x.err) errors++; cands.push(x.res); });
+    var gb = round1[1].res;
+
+    // Regola: un ISBN che corrisponde a un altro titolo prevale su ogni verde.
+    function isbnWrong(best){
+      var other = isbnInfo && isbnInfo.known && !isbnInfo.match ? isbnInfo.title : null;
+      if (!other && !(gb && gb.isbnMismatch)) return null;
+      var msg = other ? "L'ISBN indicato corrisponde a un titolo diverso (" + link("https://openlibrary.org" + isbnInfo.key, other) + ")."
+                      : "L'ISBN indicato corrisponde a un titolo diverso (vedi Google Libri).";
+      return {state:"giallo", source:"isbn", found: msg + (best && best.state === "verde" ? " Il titolo invece esiste: " + best.found : "")};
+    }
+
     var best = pick(cands);
-    if (best && best.state === "verde") return best;
+    if (best && best.state === "verde") return isbnWrong(best) || best;
 
     var ol = await safe(function(){ return checkOpenLibrary(ref); });
     if (ol.err) errors++;
     cands.push(ol.res);
     best = pick(cands);
+    var wrong = isbnWrong(best);
+    if (wrong) return wrong;
     if (best) return best;
     if (errors) return {state:"errore", found:"Non trovato nei cataloghi che hanno risposto; " + errors + " catalogo/i non ha risposto. Riprova tra qualche minuto."};
     return {state:"rosso", found:"Non trovato nei cataloghi consultati (Crossref, Google Libri, Open Library). Può essere un'opera non catalogata online oppure un riferimento errato: va controllato a mano."};

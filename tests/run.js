@@ -181,6 +181,21 @@ test("stesso ISBN in due righe: da controllare, con avviso", async () => {
     "Denis Mack Smith, I Savoia re d'Italia, Milano, Rizzoli, 1990, ISBN 88-17-33601-7."]);
   assert.ok(out.results.every(r => r.state === "giallo" && r.found.includes("Lo stesso ISBN")));
 });
+test("ISBN di un altro libro: il verde del titolo non basta", async () => {
+  setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("isbn=")
+    ? reply(200, { docs: [{ title: "Borbonia felix", author_name: ["Renata De Lorenzo"], key: "/works/OL9W" }] })
+    : reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
+  const r = await X.checkOne("Alberto Mario Banti, Il Risorgimento italiano, Roma-Bari, Laterza, 2008, ISBN 978-88-8402-830-3.");
+  assert.strictEqual(r.state, "giallo");
+  assert.ok(r.found.includes("titolo diverso") && r.found.includes("Borbonia felix"));
+});
+test("ISBN giusto confermato da Open Library: verde", async () => {
+  setup({ ...EMPTY, "openlibrary.org": (url) => url.includes("isbn=")
+    ? reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], key: "/works/OL1W" }] })
+    : reply(200, { docs: [{ title: "Il Risorgimento italiano", author_name: ["Alberto Mario Banti"], first_publish_year: 2004, key: "/works/OL1W" }] }) });
+  const r = await X.checkOne(BANTI);
+  assert.strictEqual(r.state, "verde");
+});
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;
   setup({ ...EMPTY, "api.crossref.org/works/10.": () => (++n === 1 ? reply(503, {}) :
