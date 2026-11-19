@@ -8,7 +8,7 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
 - 16 nov: menu ridotto a 4 voci, testi della home più brevi (passo 1 di 18). Da ricontrollare sul sito.
 - 18 nov: test automatici eseguiti, 16 su 16 superati. Manuale pubblicato in `docs/` (D-26).
 - 19 nov: primo test dal vivo, **non superato** (0 verdi su 30). Da correggere prima di ripeterlo: chiave Google Libri, ricerca Open Library per titolo e autore, somiglianza nei due sensi (passo 3b di 18).
-- 19 nov: **strumento corretto e pubblicato.** Lettura dei riferimenti in stile APA e italiano; Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; cognomi composti nei link OPAC; tempo massimo e secondo tentativo per catalogo; controllo dell'ISBN anche su Open Library, che prevale sul verde; avviso sugli ISBN ripetuti. Test automatici: 24. Secondo giro dal vivo: 18 verdi su 30.
+- 19 nov: **strumento corretto, in attesa di pubblicazione** (pull request #3 da unire; finché non è unita il sito usa ancora la versione vecchia). Lettura dei riferimenti in stile APA e italiano; Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; cognomi composti nei link OPAC; tempo massimo e secondo tentativo per catalogo; controllo dell'ISBN anche su Open Library, che prevale sul verde; avviso sugli ISBN ripetuti. Test automatici: 24. Secondo giro dal vivo: 18 verdi su 30.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa
