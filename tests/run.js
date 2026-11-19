@@ -25,6 +25,9 @@ globalThis.fetch = async (url) => {
 };
 
 const X = require(path.join(__dirname, "..", "assets", "checker.js"));
+globalThis.REV_CHECKER = X;
+const E = require(path.join(__dirname, "..", "assets", "estrai.js"));
+const fs = require("fs");
 const tests = [];
 function test(name, fn){ tests.push([name, fn]); }
 function setup(r){ calls = []; routes = r; X._resetCatalogs(); }
@@ -217,6 +220,33 @@ test("articolo di quotidiano: mai rosso", async () => {
   const r = await X.checkOne(ref);
   assert.strictEqual(r.state, "errore"); assert.ok(r.found.includes("Articolo di giornale"));
   assert.ok(!X.isNewspaper("DELLA CASA, Stefano, «Il cinema militante», in Storia del cinema italiano, Venezia, Marsilio, 2002."));
+});
+// ---- lettura dei file e note/bibliografia ----
+test("Word: bibliografia finale e note a piè di pagina", async () => {
+  const buf = fs.readFileSync(path.join(__dirname, "fixtures", "tesi-di-prova.docx"));
+  const doc = await E.readDocx(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+  assert.strictEqual(doc.notes.length, 6);
+  const bib = E.findBibliography(doc.paragraphs);
+  assert.strictEqual(bib.length, 4);
+  assert.ok(bib[0].startsWith("CRAINZ"));
+  assert.ok(!bib.some(b => b.includes("Grazie")));
+  const r = E.analyzeNotes(doc.notes, bib);
+  assert.strictEqual(r.rinvii, 1);
+  assert.strictEqual(r.abbreviate, 2);
+  assert.strictEqual(r.commento, 1);
+  assert.deepStrictEqual(r.mancanti, ["GINSBORG"]);
+  assert.strictEqual(r.nonCitate.length, 1);
+  assert.ok(r.nonCitate[0].startsWith("BRUNETTA"));
+});
+test("Ibidem nella prima nota", () => {
+  const r = E.analyzeNotes(["Ibidem, p. 3.", "FOFI, Goffredo, Il ’68 senza Lenin, Roma, e/o, 1998.", "a", "b", "c"], ["FOFI, Goffredo, Il ’68 senza Lenin, Roma, e/o, 1998."]);
+  assert.strictEqual(r.rinvioIniziale, true);
+});
+test("PDF: righe a capo riunite in una voce", () => {
+  const p = E.joinPdfLines(["Bibliografia", "CRAINZ, Guido, Il paese mancato. Dal miracolo", "economico agli anni Ottanta, Roma, Donzelli, 2003.", "FOFI, Goffredo, Il ’68 senza Lenin, Roma, e/o, 1998."]);
+  const bib = E.findBibliography(p);
+  assert.strictEqual(bib.length, 2);
+  assert.ok(bib[0].endsWith("Donzelli, 2003."));
 });
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;
