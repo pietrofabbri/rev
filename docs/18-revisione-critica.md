@@ -33,9 +33,9 @@ Sostituisce la tabella del 16 nov (approvato il 18 nov). La colonna "Chiude" rim
 | 2 | Confermare le proposte | Promotore | — | **Fatto il 18 nov** (P-01 rinviata al passo 5) |
 | 3 | Test dal vivo: 30 libri italiani, soglia 20 verdi; link "Cerca a mano". Risultati in 10 e in `tests/dal-vivo/2026-11-19.md` | Claude (in automatico) | R-26 | **Superato il 19 nov al terzo giro: 23 verdi su 30**, trappole giuste, nessun verde falso, 1 rosso falso (libro del 1911) |
 | 3b | Correggere lo strumento: Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; lettura dello stile "Autore, Titolo, Città, Editore, Anno"; cognomi composti nei link OPAC; tempo massimo e secondo tentativo; controllo ISBN anche su Open Library; avviso sugli ISBN ripetuti | Claude | R-41…R-45, R-47, R-48 | **Fatto e pubblicato il 19 nov** (pull request #3, 24 test automatici) |
-| 3c | Chiave Google Libri in `config.js`, limitata al sito e alla sola Books API | Promotore, poi Claude | R-40, R-46 | **Chiave creata il 19 nov e provata.** Da pubblicare: pull request #4, da unire |
-| 4 | **Lavoro di prova cronometrato**: una tesi vera da circa 100 riferimenti, gratis in cambio di una testimonianza; minuti per passo nella tabella di 04 | Responsabile | R-06, R-11, R-20 | Da fare |
-| 5 | Con i minuti misurati: fissare contenuto, prezzo e garanzie di ogni fascia; decidere sulla garanzia "nessun errore, rimborso" (R-30). Poi aggiornare 02, 03, 05 | Promotore + Claude | R-01, R-02, R-03, R-07, R-30, R-37 | In attesa del passo 4 |
+| 3c | Chiave Google Libri in `config.js`, limitata al sito e alla sola Books API | Promotore, poi Claude | R-40, R-46 | **Fatto e pubblicato il 19 nov** (pull request #4) |
+| 4 | **Lavoro di prova cronometrato**: una tesi vera da circa 100 riferimenti, gratis in cambio di una testimonianza; minuti per passo nella tabella di 04 | Responsabile | R-06, R-11, R-20 | **Prova a secco fatta il 19 nov** da Claude su un articolo di storia con 104 note (`tests/dal-vivo/2026-11-19-prova-a-secco.md`): stima di circa 2 ore umane per 73 fonti. **Il passo 4 vero resta da fare** con un cliente: minuti umani misurati e testimonianza |
+| 5 | Con i minuti misurati: fissare contenuto, prezzo e garanzie di ogni fascia; decidere sulla garanzia "nessun errore, rimborso" (R-30). Poi aggiornare 02, 03, 05 Dati di partenza: prova a secco del passo 4 e R-49…R-54 | Promotore + Claude | R-01, R-02, R-03, R-07, R-30, R-37 | In attesa del passo 4 |
 | 6 | Commercialista; D-11 scritta; chiarire di chi è l'account del sito | Responsabile + promotore | R-04, R-21, R-28 | Da fare (si può fare in parallelo ai passi 3-5) |
 | 7 | Condizioni (03) riscritte per prezzo fisso e vendita online, rilette da un legale | Claude + legale | R-12, R-13 | In attesa del passo 5 |
 | 8 | Sito: `config.js`, pagina Prezzi, pagina tesi (con le regole di 07), pagina partner senza "si paga solo l'errore" | Claude | R-22, R-23, R-33 | In attesa del passo 5 (dossier e partner si possono già togliere) |
@@ -143,6 +143,16 @@ Revisione file per file del manuale alla luce di P-01…P-08. Ogni ritrovamento 
 **Stato al 19 nov, dopo la correzione:** R-41, R-42, R-43, R-44, R-45, R-47 e R-48 chiusi nel codice (passo 3b). R-40 e R-46 chiusi con la chiave Google Libri (terzo giro: il riferimento inventato esce rosso).
 
 **Limite del test:** il campione (Wikipedia, voce "Spedizione dei Mille") è più difficile di una tesi tipica: circa due terzi sono edizioni dell'Ottocento o del primo Novecento, 5 non sono in italiano. Il prossimo giro va fatto anche su una bibliografia recente.
+
+### Dalla prova a secco del passo 4, 19 nov (dati in `tests/dal-vivo/2026-11-19-prova-a-secco.md`)
+| # | Gr. | Dove | Ritrovamento | Che cosa fare |
+|---|---|---|---|---|
+| R-49 | A | `checker.js` | **Lo stile più comune delle tesi umanistiche, "COGNOME, Nome, Titolo…", non veniva letto:** il nome proprio finiva nel titolo. 1 libro verde su 44 | **Corretto** (ramo `fix/stile-cognome-nome`): 27 verdi su 44 |
+| R-50 | A | `checker.js` · 10 | **Per i libri italiani serve il catalogo SBN.** I libri rossi controllati a mano su OPAC esistono tutti: Fofi, Barletta, Grispigni, il volume della collana di Cazzullo. Il link per solo cognome è inutile (1.115 risultati per "Fofi") | Link OPAC per parole chiave (cognome + titolo): **corretto**. Da valutare l'interrogazione automatica di SBN (10, evoluzione 2), dopo aver letto le condizioni d'uso di ICCU |
+| R-51 | A | 02 · 03 | **Le tesi umanistiche citano in nota:** 60 note su 104 sono rinvii o citazioni abbreviate. Senza bibliografia finale bisogna ricostruirle a mano (circa +30 minuti) | Nell'offerta: "si verifica la bibliografia finale". Le note si guardano solo per i passaggi del controllo fonte-frase |
+| R-52 | A | 02 · 07 | **Per le tesi umanistiche il controllo fonte-frase è quasi sempre impossibile:** solo 7 fonti su 73 (le pagine web) sono consultabili online. La promessa dei "10 passaggi" darebbe quasi solo "contenuto non verificabile" | Al passo 5 riscrivere la promessa: fonte-frase solo dove la fonte è consultabile, oppure toglierla dalla verifica tesi e tenerla per le tesi scientifiche, dove le fonti sono articoli con DOI |
+| R-53 | B | `checker.js` · 04 | **Articoli di quotidiano** (12 su 73): nessun catalogo li registra e prima uscivano rossi | **Corretto:** "da controllare nell'archivio della testata". Restano tempo umano, circa 3 minuti l'uno |
+| R-54 | A | 04 · 12 · 02 | **Tempo umano stimato: circa 2 ore per 73 fonti**, contro 1-1,5 previste. A 29 € fanno circa 12-15 € l'ora (obiettivo 40). I minuti sono stimati, non misurati da una persona | Dato di partenza per il passo 5. Opzioni da pesare: prezzo più alto per le tesi umanistiche; quotidiani e archivi esclusi o a parte; bibliografia finale obbligatoria |
 
 ---
 

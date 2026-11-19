@@ -57,6 +57,13 @@
     return w.slice(i).join(" ");
   }
   var YEAR_PART = /^(1[5-9]\d\d|20\d\d)\.?$/, ROMAN_YEAR = /^M[MDCLXVI]+\.?$/i;
+  // Stile "COGNOME, Nome, Titolo…": cognome in maiuscolo seguito dal nome proprio.
+  var CAPS_NAME = /^[A-ZÀ-ÝĆČŠŽ][A-ZÀ-ÝĆČŠŽ'’\- ]+$/;
+  var GIVEN_NAME = /^[A-ZÀ-Ý][a-zà-ÿ'’.\-]*(\s+[A-ZÀ-Ý][a-zà-ÿ'’.\-]*){0,2}(\s*\((a cura di|ed\.?|eds\.?|cur\.?)\))?$/;
+  var MONTHS = "gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre";
+  // Articolo di quotidiano o settimanale: «Titolo», in Testata, 21 novembre 1999
+  var NEWSPAPER = new RegExp("»,?\\s+in\\s+[^,]+,\\s*(\\d{1,2}\\s+)?(" + MONTHS + ")\\s+(1[89]\\d\\d|20\\d\\d)", "i");
+  function isNewspaper(ref){ return NEWSPAPER.test(ref); }
   function parseRef(ref){
     var r = String(ref||"").replace(/https?:\/\/\S+/g,"").replace(/\s+/g," ").trim();
     var m = r.match(/^(.{2,200}?)\s*\((\d{4})[a-z]?\)\.?\s*(.+)$/);
@@ -66,11 +73,21 @@
     }
     var parts = r.split(/,\s+/);
     if (parts.length >= 3){
+      // Autori: "Nome Cognome" in una parte, oppure "COGNOME, Nome" in due (anche più autori di fila).
+      var ts = 1, firstAuthor = parts[0], caps = false;
+      if (CAPS_NAME.test(parts[0].trim()) && GIVEN_NAME.test((parts[1]||"").trim())){
+        caps = true; ts = 0;
+        while (ts + 1 < parts.length && CAPS_NAME.test(parts[ts].trim()) && GIVEN_NAME.test(parts[ts+1].trim())) ts += 2;
+      }
       var j = -1;
-      for (var k = parts.length - 1; k >= 2; k--){ if (YEAR_PART.test(parts[k].trim()) || ROMAN_YEAR.test(parts[k].trim())){ j = k; break; } }
-      var title = (j >= 4) ? parts.slice(1, j-2).join(", ") : parts[1];
+      for (var k = parts.length - 1; k > ts; k--){ if (YEAR_PART.test(parts[k].trim()) || ROMAN_YEAR.test(parts[k].trim())){ j = k; break; } }
+      var title = (j >= ts + 3) ? parts.slice(ts, j-2).join(", ") : (parts[ts] || "");
+      // Saggi e articoli: il titolo è tra caporali.
+      var q = r.match(/«([^»]{3,})»/);
+      if (q) title = q[1];
+      title = title.replace(/\s*\((a cura di|ed\.?|eds\.?)\)/i,"");
       var y = j > -1 ? parseInt(parts[j], 10) : extractYear(r);
-      return {author:parts[0].trim(), surname:surnameOf(parts[0]), title:title.trim(), year: isNaN(y) ? extractYear(r) : y, style:"it"};
+      return {author:firstAuthor.trim(), surname: caps ? parts[0].trim() : surnameOf(parts[0]), title:title.trim(), year: isNaN(y) ? extractYear(r) : y, style: caps ? "it-caps" : "it"};
     }
     return {author:"", surname:"", title:"", year:extractYear(r), style:"?"};
   }
@@ -369,6 +386,7 @@
     var wrong = isbnWrong(best);
     if (wrong) return wrong;
     if (best) return best;
+    if (isNewspaper(ref)) return {state:"errore", found:"Articolo di giornale: i cataloghi bibliografici non registrano gli articoli dei quotidiani. Va controllato a mano nell'archivio della testata."};
     if (errors) return {state:"errore", found:"Non trovato nei cataloghi che hanno risposto; " + errors + " catalogo/i non ha risposto. Riprova tra qualche minuto."};
     return {state:"rosso", found:"Non trovato nei cataloghi consultati (Crossref, Google Libri, Open Library). Può essere un'opera non catalogata online oppure un riferimento errato: va controllato a mano."};
   }
@@ -412,8 +430,16 @@
   function searchLinks(ref){
     var q = ref.replace(/https?:\/\/\S+/g,"").slice(0,200);
     var links = [];
-    var sur = firstSurname(ref);
-    if (sur && sur.length >= 3){
+    // OPAC SBN per parole chiave: cognome + prime parole del titolo.
+    // Prova del 19 nov: "Fofi" da solo dà 1.115 documenti, "Fofi senza Lenin" ne dà 2.
+    var p = parseRef(ref), sur = p.surname || "";
+    var words = tokens(mainTitle(p.title || "")).slice(0, 4).join(" ");
+    var kw = (sur + " " + words).trim();
+    if (sur && sur.length >= 3 && kw.length > sur.length){
+      links.push(["OPAC SBN", "https://opac.sbn.it/risultati-ricerca-avanzata?fieldstruct%5B1%5D=ricerca.parole_tutte%3A4%3D6" +
+        "&struct%3A1001=ricerca.parole_almeno_una%3A%40or%40&fieldvalue%5B1%5D=" + encodeURIComponent(kw) +
+        "&fieldaccess%5B1%5D=Keywords%3A1016"]);
+    } else if (sur && sur.length >= 3){
       links.push(["OPAC SBN (autore)", "https://opac.sbn.it/risultati-ricerca-avanzata?fieldstruct%5B1%5D=ricerca.parole_tutte%3A4%3D6" +
         "&struct%3A1001=ricerca.parole_almeno_una%3A%40or%40&fieldvalue%5B1%5D=" + encodeURIComponent(sur) +
         "&fieldaccess%5B1%5D=Autore%3A1003%3Anocheck"]);
@@ -423,7 +449,7 @@
     return links;
   }
 
-  var api = {parseRef:parseRef, mainTitle:mainTitle, bookSimilarity:bookSimilarity, surnameOf:surnameOf, markDuplicateISBN:markDuplicateISBN, searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
+  var api = {isNewspaper:isNewspaper, parseRef:parseRef, mainTitle:mainTitle, bookSimilarity:bookSimilarity, surnameOf:surnameOf, markDuplicateISBN:markDuplicateISBN, searchLinks:searchLinks, firstSurname:firstSurname, normalize:normalize, titleSimilarity:titleSimilarity, extractYear:extractYear, extractDOI:extractDOI,
     extractISBN:extractISBN, splitRefs:splitRefs, judge:judge, authorMatch:authorMatch, parseCSV:parseCSV,
     checkOne:checkOne, checkAll:checkAll, _resetCatalogs:function(){ catalogsPromise = null; }};
   root.REV_CHECKER = api;
