@@ -21,6 +21,7 @@ Ultimo aggiornamento: 2026-11-18 · Revisione: ogni 3 mesi
 | Dati personali (GDPR) | Bassa | Medio | Solo dati bibliografici pubblici; informativa privacy sul sito; nessun dato di clienti nel manuale pubblico | 11 |
 | Diffamazione nei contenuti | Bassa | Alto | Solo dati aggregati o prodotti AI | 06, 09 |
 | Cataloghi gratuiti che cambiano o limitano | Media | Medio | Esito "non verificato" invece dell'errore; test mensile | 10 |
+| Chiave Google Libri usata da altri (è pubblica nel sito): il 22 nov Google segnalava tentativi verso servizi di mappe | Media | Basso | La chiave vale solo per la Books API e solo dalle pagine di questo account: le altre richieste sono rifiutate. Se l'uso anomalo cresce, rigenerare la chiave ("Ruota la chiave") e aggiornare `config.js` | 10 |
 | Concorrenti con strumenti gratuiti | Alta | Medio | Si fa pagare ciò che loro non fanno: fonte-frase, correzioni, ricerca a mano, firma, Italia | 02, 17 |
 | Dipendenza dalla persona che gestisce il servizio | Media | Alto | Questo manuale; archivio in formato aperto | README |
 | Conflitto promotore-responsabile sull'archivio | Media | Medio | Decisione scritta prima del primo lavoro (passo 6) | 00 (D-11) |
