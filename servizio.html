@@ -24,35 +24,39 @@
       </ul>
     </div>
     <aside class="price-box" aria-label="Prezzo">
-      <div class="price"><span data-price="perError"></span></div>
-      <p class="small">per ogni errore trovato e dimostrato. Minimo <span data-price="minimum"></span>, tetto concordato prima: di norma <span data-price="capDefault"></span> fino a <span data-price="capDefaultRefs" data-num></span> riferimenti. <strong>Nessun errore, nessun pagamento.</strong></p>
+      <table class="tiers">
+        <tr><td>fino a 150 fonti</td><td class="price-sm"><span data-price="book150"></span></td></tr>
+        <tr><td>fino a 300 fonti</td><td class="price-sm"><span data-price="book300"></span></td></tr>
+        <tr><td>oltre</td><td class="price-sm">preventivo</td></tr>
+      </table>
+      <p class="small">Prezzo fisso, controllo fonte-frase compreso. <strong>Se non troviamo nemmeno un errore, ti rimborsiamo.</strong></p>
       <p><strong>La prima verifica è gratuita</strong>, in cambio di una breve testimonianza e del permesso di misurare i tempi del lavoro.</p>
-      <a class="btn" data-mail="Verifica della bibliografia di un libro" data-body="Titolo dell'opera:&#10;Numero indicativo di riferimenti:&#10;Data entro cui serve:&#10;Allego bibliografia e testo con le citazioni.">Chiedi un preventivo</a>
+      <a class="btn" data-mail="Verifica della bibliografia di un libro" data-body="Titolo dell'opera:&#10;Numero indicativo di riferimenti:&#10;Data entro cui serve:&#10;Allego bibliografia e testo con le citazioni.">Ordina la verifica</a>
     </aside>
   </div>
 
   <h2>Come si ordina</h2>
   <ol class="steps">
     <li><strong>Ci scrivi</strong>Allegando bibliografia e testo con le citazioni. Vanno bene le bozze in PDF.</li>
-    <li><strong>Ricevi tetto e data</strong>Entro un giorno lavorativo. Accetti le <a href="condizioni.html">condizioni</a> e iniziamo.</li>
-    <li><strong>Ricevi il rapporto</strong>Entro <span data-price="deliveryDays" data-num></span> giorni lavorativi, con la fattura per il numero esatto di errori.</li>
+    <li><strong>Ricevi fascia e data</strong>Entro un giorno lavorativo. Accetti le <a href="condizioni.html">condizioni</a> e iniziamo.</li>
+    <li><strong>Ricevi il rapporto</strong>Entro <span data-price="deliveryDays" data-num></span> giorni lavorativi, con la fattura.</li>
   </ol>
 
   <h2>I dettagli</h2>
   <details><summary>Che cosa conta come errore</summary>
-    <p>Solo tre casi, ognuno con la prova allegata:</p>
+    <p>Solo tre casi, ognuno con la prova allegata. Conta anche per la garanzia "nessun errore, rimborso".</p>
     <ol>
       <li><strong>Fonte inesistente:</strong> non si trova in nessun catalogo né con la ricerca manuale.</li>
       <li><strong>Dati errati:</strong> autore, titolo, anno, rivista, volume, pagine o DOI sbagliati.</li>
       <li><strong>Fonte che non sostiene la frase:</strong> la fonte dice altro, o il contrario. Vale solo se il testo della fonte è consultabile.</li>
     </ol>
-    <p>Lo stile di citazione e i refusi di punteggiatura non contano. Le fonti esistenti ma non consultabili sono segnalate come "contenuto non verificabile" e non si pagano.</p>
+    <p>Lo stile di citazione e i refusi di punteggiatura non contano. Le fonti esistenti ma non consultabili sono segnalate come "contenuto non verificabile".</p>
   </details>
   <details><summary>Le garanzie</summary>
     <ul class="check">
       <li><strong>Ogni segnalazione ha la sua prova</strong>, un link o un estratto.</li>
-      <li><strong>Nessun errore trovato, nessun pagamento.</strong></li>
-      <li><strong>Errore non provato, errore non pagato:</strong> se contesti una voce e la prova non regge, la togliamo.</li>
+      <li><strong>Nessun errore trovato, rimborso del prezzo.</strong></li>
+      <li><strong>Errore non provato, voce tolta:</strong> se contesti una segnalazione e la prova non regge, la togliamo dal rapporto.</li>
       <li><strong>Garanzia sul verde:</strong> se emerge un errore in un riferimento che abbiamo segnato come corretto, ti rimborsiamo il lavoro.</li>
       <li><strong>Consegna in <span data-price="deliveryDays" data-num></span> giorni lavorativi</strong>, oppure <span data-price="delayDiscount" data-num></span>% di sconto.</li>
       <li><strong>Riservatezza:</strong> i file sono cancellati alla consegna; i servizi di intelligenza artificiale che usiamo non si addestrano sui tuoi dati.</li>
@@ -70,7 +74,7 @@
     </ul>
   </details>
   <details><summary>Perché pagare se c'è il controllo gratuito?</summary><p>Il controllo gratuito dice solo se un'opera compare nei cataloghi online. Non controlla edizioni e pagine, non cerca le opere che online non ci sono, non verifica che la fonte dica ciò che le attribuisci e non firma nulla.</p></details>
-  <details><summary>Usate l'intelligenza artificiale?</summary><p>Sì, per il primo passaggio. Ogni errore che ti addebitiamo è stato controllato da una persona, con la prova in mano.</p></details>
+  <details><summary>Usate l'intelligenza artificiale?</summary><p>Sì, per il primo passaggio. Ogni errore che ti segnaliamo è stato controllato da una persona, con la prova in mano.</p></details>
   <details><summary>Chi verifica è indipendente?</summary><p>Sì. Nel rapporto è dichiarato ogni legame con te o con chi ci ha presentato.</p></details>
 </main>
 <script src="assets/config.js"></script>

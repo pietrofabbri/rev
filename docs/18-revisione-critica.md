@@ -1,6 +1,6 @@
 # Revisione critica del 16 novembre e piano a piccoli passi
 
-Ultimo aggiornamento: 2026-11-19 · **Ingresso del manuale** (D-21): si parte da qui, gli altri file si aprono solo al bisogno.
+Ultimo aggiornamento: 2026-11-22 · **Ingresso del manuale** (D-21): si parte da qui, gli altri file si aprono solo al bisogno.
 
 Stato delle proposte: P-02, P-03, P-05, P-06, P-07, P-08 confermate il 18 nov (D-18…D-23). P-04 approvata ma non attiva (D-25). **P-01 in sospeso** fino al passo 5.
 
@@ -35,13 +35,32 @@ Sostituisce la tabella del 16 nov (approvato il 18 nov). La colonna "Chiude" rim
 | 3b | Correggere lo strumento: Open Library e Google Libri per titolo e autore; somiglianza nei due sensi; lettura dello stile "Autore, Titolo, Città, Editore, Anno"; cognomi composti nei link OPAC; tempo massimo e secondo tentativo; controllo ISBN anche su Open Library; avviso sugli ISBN ripetuti | Claude | R-41…R-45, R-47, R-48 | **Fatto e pubblicato il 19 nov** (pull request #3, 24 test automatici) |
 | 3c | Chiave Google Libri in `config.js`, limitata al sito e alla sola Books API | Promotore, poi Claude | R-40, R-46 | **Fatto e pubblicato il 19 nov** (pull request #4) |
 | 4 | **Lavoro di prova cronometrato**: una tesi vera da circa 100 riferimenti, gratis in cambio di una testimonianza; minuti per passo nella tabella di 04 | Responsabile | R-06, R-11, R-20 | **Prova a secco fatta il 19 nov** da Claude su un articolo di storia con 104 note (`tests/dal-vivo/2026-11-19-prova-a-secco.md`): stima di circa 2 ore umane per 73 fonti. **Il passo 4 vero resta da fare** con un cliente: minuti umani misurati e testimonianza |
-| 5 | Con i minuti misurati: fissare contenuto, prezzo e garanzie di ogni fascia; decidere sulla garanzia "nessun errore, rimborso" (R-30). Poi aggiornare 02, 03, 05 Dati di partenza: prova a secco del passo 4 e R-49…R-54 | Promotore + Claude | R-01, R-02, R-03, R-07, R-30, R-37 | **Proposta pronta il 19 nov** in 02, calcolata sulla soglia di 40 €/h (D-27): tesi 69 / 119 / 219 €, autori 179 / 339 €, fonte-frase a parte. Da confermare |
-| 6 | Commercialista; D-11 scritta; chiarire di chi è l'account del sito | Responsabile + promotore | R-04, R-21, R-28 | Da fare (si può fare in parallelo ai passi 3-5) |
-| 7 | Condizioni (03) riscritte per prezzo fisso e vendita online, rilette da un legale | Claude + legale | R-12, R-13 | In attesa del passo 5 |
-| 8 | Sito: `config.js`, pagina Prezzi, pagina tesi (con le regole di 07), pagina partner senza "si paga solo l'errore" | Claude | R-22, R-23, R-33 | **Parte già decisa fatta il 19 nov** (pull request #6): via il dossier, pagina partner informativa, "solo le fonti, mai il testo" in home e pagina tesi, prima verifica gratuita in cambio di testimonianza, consegna in 3 giorni lavorativi, link Editori tolto dal piè di pagina. **Prezzi e pagina Prezzi dopo il passo 5** Il 19 nov anche la **nuova esperienza d'uso** del sito (pull request #7, dettagli in 10) |
+| 5 | Con i minuti misurati: fissare contenuto, prezzo e garanzie di ogni fascia; decidere sulla garanzia "nessun errore, rimborso" (R-30). Poi aggiornare 02, 03, 05 Dati di partenza: prova a secco del passo 4 e R-49…R-54 | Promotore + Claude | R-01, R-02, R-03, R-07, R-30, R-37 | **Fatto il 22 nov**: listino D-28 in vigore (02), pubblicato sul sito |
+| 6 | Commercialista; D-11 scritta; chiarire di chi è l'account del sito | Responsabile + promotore | R-04, R-21, R-28 | Da fare: servono persone (commercialista, firme). **Materiale pronto il 22 nov**: domande per il commercialista e procedura per spostare il sito qui sotto, bozza di accordo D-11 in 11 |
+| 7 | Condizioni (03) riscritte per prezzo fisso e vendita online, rilette da un legale | Claude + legale | R-12, R-13 | **Bozza pronta il 22 nov** (03 e pagina Condizioni, versione 0.9, con recesso e garanzie). **Manca la lettura del legale** |
+| 8 | Sito: `config.js`, pagina Prezzi, pagina tesi (con le regole di 07), pagina partner senza "si paga solo l'errore" | Claude | R-22, R-23, R-33 | **Fatto**: decisioni del 18 nov, nuova esperienza d'uso (19 nov), prezzi D-28 (22 nov). Resta solo il link di pagamento (passo 10) |
 | 9 | Email, nome e partita IVA in `config.js`: il sito esce dall'anteprima | Responsabile | — | In attesa dei passi 6-8 |
 | 10 | Link di pagamento, pagina di conferma con l'indirizzo per il file, caselle di consenso, avviso degli ordini sul telefono | Responsabile + Claude | R-05, R-15, R-27, R-38 | In attesa del passo 9 |
 | 11 | Primo lavoro pagato; ore reali in 12 | Responsabile | — | — |
+
+## Materiale per il passo 6 (22 nov)
+
+### Domande per il commercialista
+Da portare al primo incontro, insieme a una stima di 10-20 lavori al mese a 69-339 € (12):
+1. Regime fiscale adatto per il responsabile (forfettario o ordinario), e se la partita IVA va aperta prima del primo lavoro gratuito con testimonianza o solo prima del primo incasso.
+2. Codice di attività (ATECO) che descrive correttamente il servizio: verifica di riferimenti bibliografici, non consulenza editoriale né traduzione.
+3. Fattura elettronica ai privati e alle aziende: come emetterla per lavori pagati online.
+4. Incassi con un servizio di pagamento online (passo 10): come registrarli, come trattare le commissioni e i **rimborsi previsti dalle garanzie** ("nessun errore, rimborso").
+5. Rapporto tra responsabile e promotore: il promotore riceve qualcosa? Se sì, in che forma, visto D-02 (indipendenza).
+6. Il primo lavoro gratuito in cambio di testimonianza: va documentato in qualche modo?
+
+### Spostare il sito sull'account del responsabile (R-28)
+Se l'account `pietrofabbri` è del promotore, prima di uscire dall'anteprima:
+1. Il responsabile crea un account GitHub.
+2. Su github.com/pietrofabbri/rev → Settings → General → Danger Zone → **Transfer ownership**, verso l'account del responsabile. GitHub reindirizza il vecchio indirizzo del repository, ma **non** quello del sito (pietrofabbri.github.io/rev), che cambia.
+3. Sul nuovo account: Settings → Pages → Deploy from a branch → `main` / `(root)`.
+4. Su Google Cloud, nella chiave Google Libri, aggiungere il nuovo indirizzo del sito (`https://nomeaccount.github.io/*`) e togliere quello vecchio.
+5. Aggiornare l'indirizzo del sito nei documenti (10, README) e nei link già condivisi con biblioteche e relatori.
 
 ## Gli orologi, in fila (R-35)
 - **Settimana 6** dall'uscita dall'anteprima: primo controllo (obiettivo 3 lavori pagati, 12).
