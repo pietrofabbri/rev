@@ -585,6 +585,7 @@
       var prog = $("rev-progress"); prog.classList.remove("hidden"); prog.value = 0;
       var out = await checkAll(refs, function(d, n){ prog.max = n; prog.value = d; });
       lastReport = render(out.list, out.results); lastOut = out;
+      if (root.REV_LINK && root.REV_LINK.run) root.REV_LINK.run(out.list);
       btn.disabled = false; prog.classList.add("hidden"); st.textContent = "Fatto.";
     });
     $("rev-clear").addEventListener("click", function(){

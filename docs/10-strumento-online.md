@@ -23,6 +23,11 @@ Ultimo aggiornamento: 2026-11-19 · Codice: https://github.com/pietrofabbri/rev 
 - 19 nov, **esportazione per Zotero (RIS) e BibTeX** (pull request #10). Titolo e autori vengono dal catalogo quando l'opera è trovata; anno, editore e città dal riferimento, perché indicano l'edizione citata. Nella nota del file ci sono l'esito e il riferimento originale.
 - 19 nov, **DOI registrati in DataCite** (arXiv, Zenodo): prima risultavano rossi perché si interrogava solo Crossref. Ora, se Crossref non conosce il DOI, si chiede a DataCite. Test automatici: 33.
 - 22 nov, **Google Libri di nuovo funzionante.** Dal 19 nov rispondeva "accesso negato" perché la restrizione della chiave era `https://pietrofabbri.github.io/rev/*`. Per le richieste verso altri siti, però, i browser inviano solo il dominio, `https://pietrofabbri.github.io/`, che quella regola non copre. Restrizione cambiata in `https://pietrofabbri.github.io/*`: la chiave vale solo dalle pagine di questo account GitHub e solo per la Books API.
+- 22 nov, **controllo dei link citati** (`assets/link.js`). Per ogni link della bibliografia lo strumento indica:
+  - se il sito risponde. Dal browser non si può sapere se la singola pagina esiste ancora, e il sito lo dice;
+  - la copia nella Wayback Machine più vicina alla data di consultazione scritta nel riferimento ("consultato il…").
+
+  I link DOI sono esclusi, perché si controllano già su Crossref e DataCite. Gli indirizzi in http sono segnalati come non controllabili dal browser. Test automatici: 35.
 - Da fare al passo 8 di 18: pagina Prezzi e `config.js` con il listino del passo 5; pagina tesi con le regole di [07](07-segmenti.md) in evidenza; via il dossier (D-19); pagina partner con il testo di [08](08-partner.md).
 
 ## Che cosa fa

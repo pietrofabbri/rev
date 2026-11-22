@@ -28,6 +28,7 @@ const X = require(path.join(__dirname, "..", "assets", "checker.js"));
 globalThis.REV_CHECKER = X;
 const E = require(path.join(__dirname, "..", "assets", "estrai.js"));
 const fs = require("fs");
+const LK = require(path.join(__dirname, "..", "assets", "link.js"));
 const tests = [];
 function test(name, fn){ tests.push([name, fn]); }
 function setup(r){ calls = []; routes = r; X._resetCatalogs(); }
@@ -290,6 +291,33 @@ test("DOI assente da Crossref e da DataCite: rosso", async () => {
   setup({ ...EMPTY, "api.crossref.org/works/10.": reply(404, {}), "api.datacite.org/dois/": reply(404, {}) });
   const r = await X.checkOne("Bianchi (2019). Studio inventato. doi:10.1234/nonesiste");
   assert.strictEqual(r.state, "rosso");
+});
+// ---- link citati ----
+test("link e data di consultazione letti dal riferimento", () => {
+  const r = "«Addio a Gregoretti», in Collettiva, 5 luglio 2019, URL: < https://www.collettiva.it/archivio/addio-a-gregoretti > (consultato il 12/3/2021).";
+  assert.deepStrictEqual(LK.extractURLs(r), ["https://www.collettiva.it/archivio/addio-a-gregoretti"]);
+  assert.strictEqual(LK.accessDate(r), "20210312");
+  assert.strictEqual(LK.accessDate("Sito, https://x.it (ultima consultazione: 3 marzo 2022)."), "20220303");
+  assert.deepStrictEqual(LK.extractURLs("Vaswani (2017). Attention. https://doi.org/10.48550/arXiv.1706.03762"), []);
+});
+test("sito che non risponde, copia d'archivio vicina alla data", async () => {
+  const saved = globalThis.fetch;
+  globalThis.fetch = async (url, opts) => {
+    if (url.startsWith("https://archive.org/wayback/available")) {
+      assert.ok(url.includes("timestamp=20210312"));
+      return reply(200, { archived_snapshots: { closest: { available: true, url: "http://web.archive.org/web/20210310/https://sito-chiuso.it/p", timestamp: "20210310120000", status: "200" } } });
+    }
+    if (url.startsWith("https://sito-chiuso.it")) throw new TypeError("Failed to fetch");
+    return reply(200, {});
+  };
+  try {
+    const r = await LK.checkLink("https://sito-chiuso.it/p", "20210312");
+    assert.strictEqual(r.live, "non risponde");
+    assert.strictEqual(r.archive.ts, "20210310120000");
+    assert.ok(r.archive.url.startsWith("https://web.archive.org/"));
+    const h = await LK.checkLink("http://vecchio.it/p", null);
+    assert.strictEqual(h.live, "http");
+  } finally { globalThis.fetch = saved; }
 });
 test("errore temporaneo: secondo tentativo", async () => {
   let n = 0;

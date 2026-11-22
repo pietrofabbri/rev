@@ -1,6 +1,6 @@
 # Roadmap: preparazione e tre soglie
 
-Ultimo aggiornamento: 2026-11-19 · Revisione: a ogni soglia · Supera la roadmap a 6 fasi del 14 nov (D-23)
+Ultimo aggiornamento: 2026-11-22 · Revisione: a ogni soglia · Supera la roadmap a 6 fasi del 14 nov (D-23)
 
 Nessuna spesa prima di aver incassato. A ogni soglia **si accende una cosa sola**. I passi dettagliati sono in [18](18-revisione-critica.md); i numeri in euro e ore sono in [12](12-metriche.md).
 
@@ -22,7 +22,7 @@ Una sola cosa nuova a ogni soglia (D-23). Ordine scelto in base a quanto tolgono
 | Caricare la tesi | Word, PDF o testo, letti nel browser: la bibliografia finale va da sola nella scheda | Prima del primo incasso | **Fatto il 19 nov** |
 | Note e bibliografia allineate | Autori citati in nota e assenti in bibliografia, voci mai citate, "Ibidem" nella prima nota (solo file Word) | Prima del primo incasso | **Fatto il 19 nov** |
 | Esportare i riferimenti trovati | Formato Zotero (RIS) o BibTeX, per lo studente | Prima del primo incasso, se resta tempo | **Fatto il 19 nov** |
-| Link citati | La pagina risponde ancora? Se no, rimando alla copia d'archivio (servizio Wayback Machine) | Prima del primo incasso, se resta tempo | Da fare: verificare che il servizio d'archivio risponda dal browser |
+| Link citati | Il sito risponde ancora? Copia d'archivio (Wayback Machine) più vicina alla data di consultazione | Prima del primo incasso, se resta tempo | **Fatto il 22 nov**. Limite: dal browser si sa se il sito risponde, non se la singola pagina esiste ancora |
 | Ricerca automatica in SBN | I libri italiani che oggi risultano rossi falsi (prova a secco, R-50) | Soglia 2 (10 lavori) | Prima leggere le condizioni d'uso di ICCU |
 | Fonte-frase sugli articoli ad accesso aperto | Mostra il passo della fonte accanto alla frase, quando l'articolo è leggibile gratis | Soglia 2 o 3, per le tesi scientifiche | Da fare |
 | Citazioni tra virgolette | Confronto parola per parola con la fonte consultabile | Soglia 3 | Da fare |
