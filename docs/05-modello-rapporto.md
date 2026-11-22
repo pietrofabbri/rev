@@ -1,6 +1,6 @@
 # Modello di rapporto di verifica
 
-Ultimo aggiornamento: 2026-11-18 · La riga "Importo" si aggiorna al passo 5 di 18, quando il listino è fissato
+Ultimo aggiornamento: 2026-11-22 · Listino D-28
 
 ---
 
@@ -16,7 +16,7 @@ Legami con il cliente o con chi lo ha presentato: [nessuno / descrizione].
 ## In sintesi
 - Riferimenti esaminati: [n]
 - Corretti: [n] · Errori confermati: [n] · Contenuto non verificabile: [n]
-- Importo: [secondo il listino del giorno dell'ordine: fascia "fino a [100/300] riferimenti" = [prezzo] € · oppure, verifica a errore: [n errori] × 15 € = [totale] €, minimo 30 €, tetto [tetto] €]
+- Importo: fascia "[verifica tesi / verifica di un libro] fino a [50/100/150/200/300] fonti" = [prezzo] € [+ controllo fonte-frase 25 €] [+ ricostruzione note 30 €]. Se non è stato trovato alcun errore: **prezzo rimborsato** (garanzia).
 
 ## Errori confermati
 | # | Riferimento originale | Tipo di errore | Correzione pronta | Prova |

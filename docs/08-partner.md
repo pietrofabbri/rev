@@ -11,7 +11,7 @@ Nessun lavoro attivo. Sul sito resta solo una pagina informativa in fondo, con i
 Non va scritto "il cliente paga solo per gli errori trovati" finché il passo 5 di [18](18-revisione-critica.md) non ha fissato i prezzi.
 
 ## Alla soglia dei 10 lavori: da ripensare
-Le condizioni qui sotto erano pensate per lavori da circa 350 €. Con fasce da 29-79 € il 20% vale 6-16 € a lavoro: troppo poco per muovere un partner, e insieme al credito di 10 € a chi presenta un cliente lascia margini minimi. Si riscrivono sui prezzi veri.
+Le condizioni qui sotto erano pensate per lavori da circa 350 €. Con il listino D-28 (69-339 €) il 20% vale 14-68 € a lavoro, ma il margine sopra la soglia di 40 €/h (D-27) è di soli 5 €/h: una commissione del 20% lo azzera. Va pagata in altro modo o con un prezzo più alto per i clienti dei partner. Si riscrivono sui prezzi veri.
 
 ### Condizioni del 14 nov (non attive)
 - 20% di commissione su ogni lavoro pagato dal cliente presentato, per 12 mesi.

@@ -1,6 +1,6 @@
 # Registro delle decisioni
 
-Ultimo aggiornamento: 2026-11-19
+Ultimo aggiornamento: 2026-11-22
 
 Ogni decisione ha un numero, una data, il motivo e lo stato (attiva, sospesa, in revisione, superata). Non si cancella nulla: una decisione cambiata viene marcata "superata da D-xx".
 
@@ -13,7 +13,7 @@ Ogni decisione ha un numero, una data, il motivo e lo stato (attiva, sospesa, in
 | D-05 | 2026-11-12 | AI per il 90-95% del lavoro, firma e revisione dei casi segnalati da una persona | Il cliente paga la responsabilità umana; l'AI da sola inventa citazioni | Attiva |
 | D-06 | 2026-11-12 | Strategia pull, niente messaggi a freddo in massa | I messaggi a freddo rendono poco e consumano reputazione | Attiva |
 | D-07 | 2026-11-12 | Strumento gratuito come file HTML autonomo su hosting gratuito | Le pagine claude.ai non possono interrogare cataloghi esterni e non sono pubbliche | Attiva |
-| D-08 | 2026-11-14 | Listino unico con due soli modelli di prezzo (vedi 02) | Nelle bozze c'erano cinque prezzi incoerenti | **In revisione** (proposta P-01 di 18): resta valida finché il passo 5 di 18 non fissa contenuto, prezzo e garanzie delle fasce. Supera i prezzi 400 €, 250 € fisso e 49 € del 10-12 nov |
+| D-08 | 2026-11-14 | Listino unico con due soli modelli di prezzo (vedi 02) | Nelle bozze c'erano cinque prezzi incoerenti | **Superata da D-28** |
 | D-09 | 2026-11-14 | Massimo due motori pull attivi alla volta | Con 3-4 ore a settimana cinque fronti non sono gestibili | Attiva |
 | D-10 | 2026-11-14 | Il modulo per avvocati parte solo dopo verifica legale delle banche dati | Rischio legale e tecnico più alto | Sospesa (vedi 14, lungo periodo) |
 | D-11 | 2026-11-14 | La proprietà dell'archivio dei riferimenti va stabilita per iscritto prima del primo lavoro pagato | Evitare conflitti futuri tra promotore e responsabile | Da decidere: passo 6 di 18 |
@@ -33,9 +33,9 @@ Ogni decisione ha un numero, una data, il motivo e lo stato (attiva, sospesa, in
 | D-25 | 2026-11-18 | Ordine con link di pagamento al posto dell'email | Meno attrito per chi ha una scadenza | **Approvata in linea di principio, non attiva** (P-04): parte al passo 10 di 18, dopo commercialista e condizioni riviste |
 | D-26 | 2026-11-18 | Tutta la documentazione, strategica e non, è pubblicata nella cartella `docs/` del repository pubblico pietrofabbri/rev. Il progetto claude.ai e `docs/` si aggiornano insieme a ogni modifica | Scelta del promotore: una copia versionata e consultabile ovunque. Si accetta che decisioni, prezzi in discussione, commissioni e rischi siano leggibili da chiunque, anche dai concorrenti, e che la cronologia di git li conservi | Attiva; supera D-14 |
 | D-27 | 2026-11-19 | **Soglia minima: 40 € per ora umana.** Ogni prezzo si calcola da qui, sui minuti misurati (o stimati, finché mancano le misure), con un margine sopra la soglia. Un lavoro che a preventivo scende sotto la soglia non si accetta a quel prezzo | Decisione del promotore: il lavoro deve essere pagato almeno così | Attiva; vincola il passo 5 di 18 e il listino in 02 |
+| D-28 | 2026-11-22 | **Listino a fasce a prezzo fisso** (02): tesi 69 € fino a 50 fonti, 119 € fino a 100, 219 € fino a 200; controllo fonte-frase +25 € per 10 passaggi; ricostruzione delle note +30 €. Libri: 179 € fino a 150 fonti, 339 € fino a 300, controllo fonte-frase compreso. Garanzia "nessun errore, rimborso" più garanzia sul verde | Calcolato a 45 €/h sui minuti della prova a secco, sopra la soglia di D-27. Confermato dal promotore ("vai con tutto") | Attiva; i prezzi si ricalcolano dopo il passo 4 vero e ogni 10 lavori |
 
 ## Decisioni aperte
-- **Prezzo fisso a fasce (P-01):** proposta del 19 nov in 02, costruita su D-27. Da confermare (passo 5 di 18).
 - **D-11** chi possiede l'archivio: responsabile, promotore o una futura società. Raccomandazione: il responsabile, con licenza d'uso al promotore. Si tiene in formato aperto, così resta trasferibile.
 - **Account del sito** (R-28): se è del promotore, il repository passa al responsabile prima di uscire dall'anteprima.
 - Nome del servizio e dominio.

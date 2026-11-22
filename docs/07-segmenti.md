@@ -4,8 +4,8 @@ Ultimo aggiornamento: 2026-11-18 · Revisione: ogni 3 mesi
 
 | Segmento | Bisogno | Offerta (da 02) | Canale | Stato |
 |---|---|---|---|---|
-| Studenti con tesi | Non fare brutte figure in discussione | Verifica tesi | Pagina tesi, biblioteche universitarie, relatori | **Attivo dall'uscita dall'anteprima** (D-18) |
-| Autori che si autopubblicano | Credibilità del libro | Verifica completa (prezzo al passo 5 di 18) | Strumento gratuito, servizi di autopubblicazione | **Attivo dall'uscita dall'anteprima** (D-18) |
+| Studenti con tesi | Non fare brutte figure in discussione | Verifica tesi (69, 119 o 219 €, D-28) | Pagina tesi, biblioteche universitarie, relatori | **Attivo dall'uscita dall'anteprima** (D-18) |
+| Autori che si autopubblicano | Credibilità del libro | Verifica di un libro (179 € o 339 €, D-28) | Strumento gratuito, servizi di autopubblicazione | **Attivo dall'uscita dall'anteprima** (D-18) |
 | Editori di saggistica, universitari, professionali | Evitare errori in stampa e ristampe | Verifica completa | Presentazioni dirette, bollino; partner dopo la soglia | Dopo 10 lavori pagati (D-18, 14) |
 | Agenzie di contenuti per aziende | Clienti che chiedono fonti affidabili | Verifica completa | Partner | Dopo 20 lavori al mese |
 | Avvocati | Evitare sanzioni per sentenze inesistenti | Da definire | Ordini, formazione | **Bloccato** (D-10) |

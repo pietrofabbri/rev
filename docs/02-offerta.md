@@ -1,10 +1,10 @@
 # Offerta e listino unico
 
-Ultimo aggiornamento: 2026-11-19 · Revisione: al passo 5 di 18, poi ogni 3 mesi · **Unica fonte dei prezzi**
+Ultimo aggiornamento: 2026-11-22 · Revisione: al passo 5 di 18, poi ogni 3 mesi · **Unica fonte dei prezzi**
 
-> **Listino in revisione (D-08, proposta P-01).** I prezzi qui sotto restano validi finché il passo 5 di [18](18-revisione-critica.md) non fissa, con i minuti misurati nel lavoro di prova, che cosa comprende ogni fascia, quanto costa e quali garanzie restano. Proposta da verificare: 29 € fino a 100 riferimenti, 79 € fino a 300, oltre su preventivo.
+> **Listino in vigore dal 22 novembre 2026 (D-28).** Supera il listino del 14 novembre (D-08: 15 € a errore per gli autori, 29 € per le tesi), che non è più offerto. I minuti su cui si basa sono stimati dalla prova a secco: dopo il passo 4 vero e poi ogni 10 lavori si ricalcolano (12).
 
-## Proposta di listino del 19 novembre (da confermare: passo 5 di 18)
+## Listino
 
 **Regola di partenza (D-27):** almeno 40 € per ora umana. I prezzi sotto sono calcolati a **45 € l'ora** sui minuti stimati nella prova a secco, per avere margine finché i minuti non sono misurati da una persona.
 
@@ -33,7 +33,7 @@ Ultimo aggiornamento: 2026-11-19 · Revisione: al passo 5 di 18, poi ogni 3 mesi
 
 Comprende quello della verifica tesi più il controllo fonte-frase su tutte le citazioni con fonte consultabile online.
 
-### Garanzie proposte (sostituiscono le 2 e 3 attuali)
+### Garanzie
 1. Ogni segnalazione ha la sua prova.
 2. **Se non troviamo nemmeno un errore, ti rimborsiamo** (R-30): tiene la promessa che distingue il servizio dagli strumenti gratuiti.
 3. Garanzia sul verde: errore in un riferimento segnato corretto, rimborso del lavoro.
@@ -42,28 +42,19 @@ Comprende quello della verifica tesi più il controllo fonte-frase su tutte le c
 
 Non si propone "rimborso se non soddisfatto" (P-01): è aperto agli abusi (13) e si sovrappone alla 2.
 
-### Rischi di questa proposta
+### Rischi di questo listino
 - **Domanda:** 119 € per una tesi è quattro volte i 29 € di prima. Non sappiamo se gli studenti pagano questa cifra: lo dicono solo i primi ordini. Il criterio di stop a 3 mesi (14) resta.
 - **Minuti stimati, non misurati:** dopo il passo 4 vero e poi ogni 10 lavori si ricalcola. Se il ricavo reale per ora scende sotto 40 €, si alza la fascia (12).
 - **Commissioni di pagamento:** circa 1,5% più pochi centesimi a transazione. Già comprese nel margine tra 40 e 45 €/h.
 
 ---
 
-## Listino in vigore fino alla conferma
+## Servizi gratuiti
+**Controllo gratuito** sul sito, per chiunque: fino a 30 riferimenti per volta. Comprende l'esistenza nei cataloghi, il caricamento del file della tesi, il confronto tra note e bibliografia, il controllo dei link citati e l'esportazione per Zotero e BibTeX.
 
-## Servizi
+**Primo lavoro gratuito**, in cambio di una testimonianza scritta e del permesso di cronometrarlo (passo 4 di 18).
 
-| Servizio | Per chi | Prezzo | Cosa comprende |
-|---|---|---|---|
-| **Controllo gratuito** | Chiunque | 0 € | Strumento online, fino a 30 riferimenti, solo esistenza nei cataloghi |
-| **Verifica tesi** | Studenti | **29 € fissi** fino a 100 riferimenti | Esistenza e dati bibliografici, correzioni pronte, ricerca a mano dei non trovati; coerenza fonte-frase sui 10 passaggi indicati dallo studente; firma |
-| **Verifica completa** | Autori (editori dopo 10 lavori pagati, D-18) | **15 € per errore confermato**; minimo 30 €; tetto concordato prima (di norma 350 € fino a 300 riferimenti) | Esistenza, dati bibliografici, coerenza fonte-frase su tutte le citazioni, correzioni pronte, firma, registro |
-
-**Tolto:** dossier di revisione a 150 € (D-19). Torna solo se un cliente lo chiede.
-
-**Al posto dell'offerta di lancio:** il primo lavoro è gratuito, in cambio di una testimonianza scritta e del permesso di cronometrarlo (passo 4 di 18). Le testimonianze successive si chiedono senza sconto.
-
-**Che cosa si mette davanti nella comunicazione:** ciò che lo strumento gratuito non fa (correzioni pronte, ricerca a mano dei non trovati, controllo fonte-frase, firma). Il solo controllo di esistenza è gratis (01, punto 4).
+**Tolto:** dossier di revisione (D-19).
 
 ## Che cosa conta come errore
 Solo tre casi, ognuno con la prova allegata:
@@ -74,12 +65,7 @@ Solo tre casi, ognuno con la prova allegata:
 **Non sono errori:** stile di citazione, refusi minimi di punteggiatura, fonti esistenti ma non consultabili (segnate "contenuto non verificabile", senza addebito).
 
 ## Garanzie
-1. **Ogni segnalazione ha la sua prova**, un link o un estratto, controllabile in un clic.
-2. **Nessun errore trovato, nessun pagamento.** *(Al passo 5 si decide se resta anche con il prezzo fisso, come rimborso: vedi 18, R-30.)*
-3. **Errore non provato, errore non pagato.** Se il cliente contesta e la prova non regge, la voce si toglie.
-4. **Garanzia sul verde:** se emerge un errore in un riferimento segnato corretto, si rimborsa il lavoro. Il limite è il prezzo pagato.
-5. **Tempi:** consegna entro **3 giorni lavorativi dal ricevimento completo dei file**, o 20% di sconto.
-6. **Riservatezza:** file cancellati alla consegna, servizi AI che non usano i dati per l'addestramento.
+Sono quelle della sezione "Listino" qui sopra. "Errore non provato, voce tolta": se il cliente contesta una segnalazione e la prova non regge, la voce si toglie dal rapporto.
 
 ## Che cosa non si promette
 Che il libro sia privo di errori, che le tesi siano corrette, che il testo sia "scritto da un umano".

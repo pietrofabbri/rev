@@ -1,6 +1,6 @@
 # Metriche e revisione settimanale
 
-Ultimo aggiornamento: 2026-11-19 · **Unica fonte dei numeri**
+Ultimo aggiornamento: 2026-11-22 · **Unica fonte dei numeri**
 
 ## Il foglio (uno solo)
 Un foglio di calcolo con tre schede:
@@ -19,11 +19,11 @@ Un foglio di calcolo con tre schede:
 | Clienti che tornano entro 6 mesi | ≥ 30% | Rivedere l'offerta |
 
 ## Soglie (vedi 14)
-| Soglia | In lavori | In ricavi (con fasce 29-79 €, da aggiornare al passo 5) | In ore umane |
+| Soglia | In lavori | In ricavi (listino D-28: 69-339 €) | In ore umane |
 |---|---|---|---|
 | 1. Primo incasso | 1 | — | — |
-| 2. Dieci lavori | 10 in totale | circa 300-800 € | circa 10-15 ore in totale |
-| 3. Regime | 20 al mese | circa 600-1.600 € al mese | circa 20-30 ore al mese, cioè 5-7 a settimana: oltre le 3-4 previste in 15 |
+| 2. Dieci lavori | 10 in totale | circa 700-1.200 € (tesi) | circa 15-27 ore in totale (90-160 minuti a tesi) |
+| 3. Regime | 20 al mese | circa 1.400-2.400 € al mese (tesi) | circa 30-53 ore al mese, cioè 7-12 a settimana: ben oltre le 3-4 previste in 15, quindi a questa soglia servono più ore o un secondo revisore (14) |
 
 **Ritmo:** a 3 lavori ogni 6 settimane, i 10 lavori arrivano dopo circa 20 settimane. Lo stop a 3 mesi si misura sul primo incasso (14), non sui 10 lavori.
 

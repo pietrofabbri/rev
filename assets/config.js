@@ -27,13 +27,14 @@ window.REV_CONFIG = {
 
   // --- Listino (unica fonte dei prezzi del sito) ---
   prices: {
-    perError: 15,
-    minimum: 30,
-    capDefault: 350,
-    capDefaultRefs: 300,
-    thesis: 29,
-    thesisMaxRefs: 100,
-    thesisClaims: 10,
+    // Listino D-28 (22 nov 2026): fasce a prezzo fisso, calcolate a 45 € per ora umana (soglia minima 40 €, D-27)
+    thesis50: 69,            // verifica tesi fino a 50 fonti
+    thesis100: 119,          // fino a 100 fonti
+    thesis200: 219,          // fino a 200 fonti
+    claims10: 25,            // controllo fonte-frase, 10 passaggi (solo fonti consultabili online)
+    notesRebuild: 30,        // senza bibliografia finale: ricostruzione delle note abbreviate, fino a 100 note
+    book150: 179,            // verifica di un libro fino a 150 fonti, fonte-frase compreso
+    book300: 339,            // fino a 300 fonti
     deliveryDays: 3,         // giorni lavorativi dal ricevimento completo dei file
     delayDiscount: 20,
     partnerCommission: 20,

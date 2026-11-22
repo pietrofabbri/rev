@@ -124,6 +124,9 @@ td.ref{font-family:var(--type);font-size:.9rem}
 .price-box{border:2px solid var(--ink);border-radius:6px;padding:20px 22px}
 .price{font-size:2.2rem;font-weight:800;line-height:1.1}
 .price-box .btn{margin-top:12px}
+.tiers{width:100%;border-collapse:collapse;margin:0 0 6px}
+.tiers td{padding:7px 0;border-bottom:1px solid var(--line);font-size:1rem}
+.tiers .price-sm{text-align:right;font-weight:800;font-size:1.25rem;white-space:nowrap}
 .note{border-left:4px solid var(--red);padding:4px 0 4px 14px;max-width:var(--read)}
 ul.check{list-style:none;padding:0;margin:.6em 0}
 ul.check li{padding-left:28px;position:relative;margin:.45em 0}
@@ -154,10 +157,10 @@ main > ol, main > ul, main > p{max-width:var(--read)}
   .scheda{padding:34px 16px 46px}
   .scheda-head{left:16px;right:16px}
   /* risultati come schede impilate */
-  table, thead, tbody, tr, td{display:block}
-  thead{display:none}
-  tr{border-bottom:1px solid var(--line);padding:10px 0}
-  td{border:0;padding:4px 0}
+  .table-wrap table, .table-wrap thead, .table-wrap tbody, .table-wrap tr, .table-wrap td{display:block}
+  .table-wrap thead{display:none}
+  .table-wrap tr{border-bottom:1px solid var(--line);padding:10px 0}
+  .table-wrap td{border:0;padding:4px 0}
   td.num{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
